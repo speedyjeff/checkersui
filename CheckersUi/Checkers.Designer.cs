@@ -32,8 +32,8 @@ namespace CheckersUi
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1024, 800);
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(1024, 824);
+            this.Text = "Checkers UI";
             this.DoubleBuffered = true;
 
             var panel = new TableLayoutPanel();

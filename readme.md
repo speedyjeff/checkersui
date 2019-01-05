@@ -1,5 +1,12 @@
 ### Winforms shell for a simple Checkers UI
 
+![main](https://github.com/speedyjeff/checkersui/blob/master/media/main.png)
+
+
+## Visuals
+
+Update the images under CheckersUi\Media
+
 ## Board
 
 Initialization
