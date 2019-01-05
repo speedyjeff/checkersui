@@ -26,6 +26,11 @@ public enum CellState { Inative, Active, Red, Black, RedKing, BlackKing, Selecte
 Board.SetCellState(row, col, CellState.Selected);
 ```
 
+Get Cell state
+```C#
+CellState state = Board.GetCellState(row, col);
+```
+
 ## Previous Moves
 
 Initialization

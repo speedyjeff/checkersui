@@ -35,12 +35,19 @@ namespace CheckersUi
             Images.Add(CellState.RedKing, Images[CellState.BlackKing]);
         }
 
-        public void ChangeState(CellState state)
+        public CellState CellState
         {
-            if (state != State)
+            get
             {
-                State = state;
-                IsDirty = true;
+                return State;
+            }
+            set
+            {
+                if (value != State)
+                {
+                    State = value;
+                    IsDirty = true;
+                }
             }
         }
 

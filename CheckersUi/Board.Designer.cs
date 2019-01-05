@@ -22,8 +22,15 @@ namespace CheckersUi
         {
             if (row < 0 || row > Cells.Length ||
                 col < 0 || col > Cells[row].Length) throw new Exception("Invalid cell index : " + row + ", " + col);
-            Cells[row][col].ChangeState(state);
+            Cells[row][col].CellState = state;
             Cells[row][col].Refresh();
+        }
+
+        public CellState GetCellState(int row, int col)
+        {
+            if (row < 0 || row > Cells.Length ||
+                col < 0 || col > Cells[row].Length) throw new Exception("Invalid cell index : " + row + ", " + col);
+            return Cells[row][col].CellState;
         }
 
 #region private
