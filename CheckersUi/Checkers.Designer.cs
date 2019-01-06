@@ -47,6 +47,13 @@ namespace CheckersUi
             Board = new Board(800, 800);
             Board.OnSelected += Board_OnSelected;
             Board.SetCellState(3, 1, CellState.Selected);
+
+            Board.AddSwoop(new Swoop()
+            {
+                From = new Location() { Row = 1, Col = 3 },
+                To = new Location() { Row = 3, Col = 1 }
+            });
+
             panel.Controls.Add(Board, 1, 0);
 
             // the previous moves section
@@ -57,13 +64,6 @@ namespace CheckersUi
         private void Board_OnSelected(int row, int col)
         {
             System.Diagnostics.Debug.WriteLine("Cell {0},{1} selected", row, col);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            Board.Refresh();
         }
 
         private Board Board;

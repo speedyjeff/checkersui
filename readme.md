@@ -31,6 +31,25 @@ Get Cell state
 CellState state = Board.GetCellState(row, col);
 ```
 
+Add a swoop indicator on a move over a piece
+```C#
+var index = Board.AddSwoop(new Swoop()
+{
+    From = new Location() { Row = 1, Col = 3 },
+    To = new Location() { Row = 3, Col = 1 }
+});
+```
+
+Get a active swoop
+```C#
+var swoop = Board.GetSwoop(index);
+```
+
+Remove a swoop
+```C#
+if (Board.RemoveSwoop(index)) ...
+```
+
 ## Previous Moves
 
 Initialization

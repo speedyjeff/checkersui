@@ -79,59 +79,62 @@ namespace CheckersUi
         {
             components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.DoubleBuffered = true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (!IsDirty) return;
-            IsDirty = false;
-
-            var bitmap = new Bitmap(Width, Height);
-
-            // combine the images
-            using (var g = Graphics.FromImage(bitmap))
+            if (IsDirty || DoubleBuffer == null)
             {
-                // get the base image
-                if (State == CellState.Inative) g.DrawImage(Images[CellState.Inative], 0, 0, Width, Height);
-                else g.DrawImage(Images[CellState.Active], 0, 0, Width, Height);
+                IsDirty = false;
+                DoubleBuffer = new Bitmap(Width, Height);
 
-                Bitmap image = null;
-                Images.TryGetValue(State, out image);
-
-                switch (State)
+                // combine the images
+                using (var g = Graphics.FromImage(DoubleBuffer))
                 {
-                    case CellState.Active:
-                    case CellState.Inative:
-                        // already applied
-                        break;
-                    case CellState.Black:
-                        if (image != null) g.DrawImage(image, 0, 0);
-                        else g.FillEllipse(new SolidBrush(Color.Black), Width / 4, Height / 4, Width / 2, Height / 2);
-                        break;
-                    case CellState.Red:
-                        if (image != null) g.DrawImage(image, 0, 0);
-                        else g.FillEllipse(new SolidBrush(Color.Red), Width / 4, Height / 4, Width / 2, Height / 2);
-                        break;
-                    case CellState.Selected:
-                        g.DrawRectangle(Selected, 0, 0, Width, Height);
-                        break;
-                    case CellState.BlackKing:
-                        g.DrawImage(Images[CellState.Black], 0, 0);
-                        g.DrawImage(Images[CellState.BlackKing], 0, 0);
-                        break;
-                    case CellState.RedKing:
-                        g.DrawImage(Images[CellState.Red], 0, 0);
-                        g.DrawImage(Images[CellState.RedKing], 0, 0);
-                        break;
-                    default: throw new Exception("Invalid cell state : " + State);
+                    // get the base image
+                    if (State == CellState.Inative) g.DrawImage(Images[CellState.Inative], 0, 0, Width, Height);
+                    else g.DrawImage(Images[CellState.Active], 0, 0, Width, Height);
 
+                    Bitmap image = null;
+                    Images.TryGetValue(State, out image);
+
+                    switch (State)
+                    {
+                        case CellState.Active:
+                        case CellState.Inative:
+                            // already applied
+                            break;
+                        case CellState.Black:
+                            if (image != null) g.DrawImage(image, 0, 0);
+                            else g.FillEllipse(new SolidBrush(Color.Black), Width / 4, Height / 4, Width / 2, Height / 2);
+                            break;
+                        case CellState.Red:
+                            if (image != null) g.DrawImage(image, 0, 0);
+                            else g.FillEllipse(new SolidBrush(Color.Red), Width / 4, Height / 4, Width / 2, Height / 2);
+                            break;
+                        case CellState.Selected:
+                            g.DrawRectangle(Selected, 0, 0, Width, Height);
+                            break;
+                        case CellState.BlackKing:
+                            g.DrawImage(Images[CellState.Black], 0, 0);
+                            g.DrawImage(Images[CellState.BlackKing], 0, 0);
+                            break;
+                        case CellState.RedKing:
+                            g.DrawImage(Images[CellState.Red], 0, 0);
+                            g.DrawImage(Images[CellState.RedKing], 0, 0);
+                            break;
+                        default: throw new Exception("Invalid cell state : " + State);
+
+                    }
+
+                    // apply number
+                    g.DrawString(Number.ToString(), Textfont, TextColor, 0, Textfont.Size);
                 }
-
-                // apply number
-                g.DrawString(Number.ToString(), Textfont, TextColor, 0, Textfont.Size);
             }
 
-            BackgroundImage = bitmap;
+            base.OnPaint(e);
+            BackgroundImage = DoubleBuffer;
         }
 
         private static Bitmap LoadImage(string path, bool transparent = false)
@@ -144,6 +147,7 @@ namespace CheckersUi
             return bitmap;
         }
 
+        private Bitmap DoubleBuffer;
         private CellState State;
         private int Number;
         private bool IsDirty;
