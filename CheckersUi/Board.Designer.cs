@@ -61,6 +61,7 @@ namespace CheckersUi
             }
 
             // force a refresh
+            IsDirty = true;
             Refresh();
 
             return index;
@@ -83,6 +84,7 @@ namespace CheckersUi
             }
 
             // forece a refresh
+            IsDirty = true;
             Refresh();
 
             return true;
@@ -205,6 +207,7 @@ namespace CheckersUi
             if (IsDirty || DoubleBuffer == null)
             {
                 DoubleBuffer = new Bitmap(Height, Width);
+                IsDirty = false;
 
                 using (var g = Graphics.FromImage(DoubleBuffer))
                 {
