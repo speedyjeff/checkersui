@@ -74,8 +74,8 @@ namespace CheckersUi
             // Create two columns and add table to dataset
             DataColumn red = new DataColumn("Red", typeof(string));
             DataColumn black = new DataColumn("Black", typeof(string));
+            Table.Columns.Add(black); //black moves first and goes in the left column (first add)
             Table.Columns.Add(red);
-            Table.Columns.Add(black);
             data.Tables.Add(Table);
 
             var grid = new DataGrid();

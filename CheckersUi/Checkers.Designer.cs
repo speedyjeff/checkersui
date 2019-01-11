@@ -46,12 +46,12 @@ namespace CheckersUi
             // the board
             Board = new Board(800, 800);
             Board.OnSelected += Board_OnSelected;
-            Board.SetCellState(3, 1, CellState.Selected);
+            Board.SetCellState(3, 2, CellState.Selected);
 
             Board.AddSwoop(new Swoop()
             {
-                From = new Location() { Row = 1, Col = 3 },
-                To = new Location() { Row = 3, Col = 1 }
+                From = new Location() { Row = 1, Col = 4 },
+                To = new Location() { Row = 3, Col = 2 }
             });
 
             panel.Controls.Add(Board, 1, 0);

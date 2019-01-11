@@ -129,7 +129,8 @@ namespace CheckersUi
                     }
 
                     // apply number
-                    g.DrawString(Number.ToString(), Textfont, TextColor, 0, Textfont.Size);
+                    if (Number != 0)
+                        g.DrawString(Number.ToString(), Textfont, TextColor, 0, Textfont.Size);
                 }
             }
 

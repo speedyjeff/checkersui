@@ -172,18 +172,20 @@ namespace CheckersUi
 
             // add cells
             Cells = new Cell[Table.RowCount][];
+            int activeNumber = 1; //only number active cells
             for(int row = 0; row < Table.RowCount; row++)
             {
                 Cells[row] = new Cell[Table.ColumnCount];
                 for(int col=0; col< Table.ColumnCount; col++)
                 {
-
+                    int cellNumber = 0; //only active is numbered
                     var state = CellState.Inative;
 
-                    if ((row % 2 == 0 && col % 2 == 0)
+                    if ((row % 2 != 0 && col % 2 == 0)
                         ||
-                        (row % 2 != 0 && col % 2 != 0))
+                        (row % 2 == 0 && col % 2 != 0))
                     {
+                        cellNumber = activeNumber++;
                         if (row <= 2) state = CellState.Black;
                         else if (row >= 5) state = CellState.Red;
                         else state = CellState.Active;
@@ -191,7 +193,7 @@ namespace CheckersUi
 
                     Cells[row][col] = new Cell(
                         state, 
-                        (row * Table.RowCount) + col,
+                        cellNumber,
                         CellHeight,
                         CellWidth);
                     Cells[row][col].MouseClick += Cell_MouseClick;
