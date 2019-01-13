@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using static CheckersUiWf.Boundary;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
-    public enum CellState { Inative, Active, Red, Black, RedKing, BlackKing, Selected };
-
     partial class Cell
     {
-        public Cell(CellState state, int number, int height, int width)
+        public Cell(CellState state, int square, int height, int width, HighLight highlight)
         {
-            Number = number;
+            SquareNum = square;
             State = state;
+            Highlight = highlight;
             IsDirty = true;
             Height = height;
             Width = width;
@@ -27,12 +27,12 @@ namespace CheckersUi
             // preload the images
             Images = new Dictionary<CellState, Bitmap>();
 
-            Images.Add(CellState.Inative, LoadImage(@"Media\inactive.png"));
-            Images.Add(CellState.Active, LoadImage(@"Media\active.png"));
+            Images.Add(CellState.Inactive, LoadImage(@"Media\inactive.png"));
+            Images.Add(CellState.Empty, LoadImage(@"Media\active.png"));
             Images.Add(CellState.Black, LoadImage(@"Media\black.png", true));
-            Images.Add(CellState.Red, LoadImage(@"Media\red.png", true));
+            Images.Add(CellState.White, LoadImage(@"Media\red.png", true));
             Images.Add(CellState.BlackKing, LoadImage(@"Media\king.png", true));
-            Images.Add(CellState.RedKing, Images[CellState.BlackKing]);
+            Images.Add(CellState.WhiteKing, Images[CellState.BlackKing]);
         }
 
         public CellState CellState
@@ -51,8 +51,26 @@ namespace CheckersUi
             }
         }
 
-        #region private
+        public HighLight HightLight
+        {
+            get
+            {
+                return Highlight;
+            }
+            set
+            {
+                if (value != Highlight)
+                {
+                    Highlight = value;
+                    IsDirty = true;
+                }
+            }
+        }
 
+        public int Square { get => SquareNum; }
+
+        #region private
+        
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -93,44 +111,51 @@ namespace CheckersUi
                 using (var g = Graphics.FromImage(DoubleBuffer))
                 {
                     // get the base image
-                    if (State == CellState.Inative) g.DrawImage(Images[CellState.Inative], 0, 0, Width, Height);
-                    else g.DrawImage(Images[CellState.Active], 0, 0, Width, Height);
+                    if (State == CellState.Inactive) g.DrawImage(Images[CellState.Inactive], 0, 0, Width, Height);
+                    else g.DrawImage(Images[CellState.Empty], 0, 0, Width, Height);
 
                     Bitmap image = null;
                     Images.TryGetValue(State, out image);
 
                     switch (State)
                     {
-                        case CellState.Active:
-                        case CellState.Inative:
+                        case CellState.Empty:
+                        case CellState.Inactive:
                             // already applied
                             break;
                         case CellState.Black:
                             if (image != null) g.DrawImage(image, 0, 0);
                             else g.FillEllipse(new SolidBrush(Color.Black), Width / 4, Height / 4, Width / 2, Height / 2);
                             break;
-                        case CellState.Red:
+                        case CellState.White:
                             if (image != null) g.DrawImage(image, 0, 0);
                             else g.FillEllipse(new SolidBrush(Color.Red), Width / 4, Height / 4, Width / 2, Height / 2);
-                            break;
-                        case CellState.Selected:
-                            g.DrawRectangle(Selected, 0, 0, Width, Height);
                             break;
                         case CellState.BlackKing:
                             g.DrawImage(Images[CellState.Black], 0, 0);
                             g.DrawImage(Images[CellState.BlackKing], 0, 0);
                             break;
-                        case CellState.RedKing:
-                            g.DrawImage(Images[CellState.Red], 0, 0);
-                            g.DrawImage(Images[CellState.RedKing], 0, 0);
+                        case CellState.WhiteKing:
+                            g.DrawImage(Images[CellState.White], 0, 0);
+                            g.DrawImage(Images[CellState.WhiteKing], 0, 0);
                             break;
-                        default: throw new Exception("Invalid cell state : " + State);
+                        default:
+                            CheckersCallBack.Panic("Invalid cell state : " + State);
+                            break;
 
                     }
+                    if (Highlight == HighLight.Selected)
+                    {
+                        g.DrawRectangle(Selected, 0, 0, Width, Height);
+                    }
+                    else if (Highlight == HighLight.Target)
+                    {
+                        g.DrawRectangle(Target, 0, 0, Width, Height);
+                    }
 
-                    // apply number
-                    if (Number != 0)
-                        g.DrawString(Number.ToString(), Textfont, TextColor, 0, Textfont.Size);
+                    // apply square number
+                    if (Square != 0)
+                        g.DrawString(Square.ToString(), Textfont, TextColor, 0, Textfont.Size);
                 }
             }
 
@@ -150,11 +175,13 @@ namespace CheckersUi
 
         private Bitmap DoubleBuffer;
         private CellState State;
-        private int Number;
+        private HighLight Highlight;
+        private int SquareNum;
         private bool IsDirty;
         private static Font Textfont = new Font("Arial", 12);
         private static SolidBrush TextColor = new SolidBrush(Color.Black);
-        private static Pen Selected = new Pen(Color.Yellow, 10) { DashStyle = DashStyle.Dash };
+        private static Pen Target = new Pen(Color.Yellow, 10) { DashStyle = DashStyle.Dash };
+        private static Pen Selected = new Pen(Color.White, 10) { DashStyle = DashStyle.Dash };
         private static Dictionary<CellState, Bitmap> Images;
 
         #endregion

@@ -2,8 +2,9 @@
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using static CheckersUiWf.Boundary;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
     partial class Moves
     {
@@ -14,26 +15,26 @@ namespace CheckersUi
             InitializeComponent();
         }
 
-        public void AddRow(string red, string black)
+        public void AddRow(string white, string black)
         {
             var row = Table.NewRow();
-            row["Red"] = red;
-            row["Black"] = black;
+            row[Word4White] = white;
+            row[Word4Black] = black;
             Table.Rows.Add(row);
         }
 
-        public void UpdateRow(int index, string red, string black)
+        public void UpdateRow(int index, string white, string black)
         {
-            if (index < 0 || index >= Count) throw new Exception("Invalid row index : " + index);
-            Table.Rows[index]["Red"] = red;
-            Table.Rows[index]["Black"] = black;
+            if (index < 0 || index >= Count) CheckersCallBack.Panic("Invalid row index : " + index);
+            Table.Rows[index][Word4White] = white;
+            Table.Rows[index][Word4Black] = black;
         }
 
-        public void GetRow(int index, out string red, out string black)
+        public void GetRow(int index, out string white, out string black)
         {
-            if (index < 0 || index >= Count) throw new Exception("Invalid row index : " + index);
-            red = (string)Table.Rows[index]["Red"];
-            black = (string)Table.Rows[index]["Black"];
+            if (index < 0 || index >= Count) CheckersCallBack.Panic("Invalid row index : " + index);
+            white = (string)Table.Rows[index][Word4White];
+            black = (string)Table.Rows[index][Word4Black];
         }
 
         public int Count { get { return Table.Rows.Count; } }
@@ -72,10 +73,10 @@ namespace CheckersUi
             Table = new DataTable("Moves");
 
             // Create two columns and add table to dataset
-            DataColumn red = new DataColumn("Red", typeof(string));
-            DataColumn black = new DataColumn("Black", typeof(string));
+            DataColumn white = new DataColumn(Word4White, typeof(string));
+            DataColumn black = new DataColumn(Word4Black, typeof(string));
             Table.Columns.Add(black); //black moves first and goes in the left column (first add)
-            Table.Columns.Add(red);
+            Table.Columns.Add(white);
             data.Tables.Add(Table);
 
             var grid = new DataGrid();

@@ -46,36 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Board.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Board.Designer.cs">
-      <DependentUpon>Board.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cell.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Cell.Designer.cs">
-      <DependentUpon>Cell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Checkers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Checkers.Designer.cs">
-      <DependentUpon>Checkers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GraphicalOverlay.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="GraphicalOverlay.designer.cs">
-      <DependentUpon>GraphicalOverlay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Moves.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Moves.Designer.cs">
-      <DependentUpon>Moves.cs</DependentUpon>
-    </Compile>
+    <Compile Include="MyCheckersCallBack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -101,24 +72,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Media\active.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Media\black.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Media\inactive.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Media\king.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Media\red.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Media\swoop.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\CheckersUiWf\CheckersUiWf.csproj">
+      <Project>{4d73a905-e6e2-41b7-af14-fc1b0384d67d}</Project>
+      <Name>CheckersUiWf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

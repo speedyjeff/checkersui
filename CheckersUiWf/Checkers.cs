@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
-    public partial class Cell : UserControl
+    public partial class Checkers : Form
     {
-        public Cell()
+        public Checkers()
         {
             InitializeComponent();
         }

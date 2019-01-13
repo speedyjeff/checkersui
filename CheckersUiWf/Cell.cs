@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
-    public partial class Board : UserControl
+    public partial class Cell : UserControl
     {
-        public Board()
+        public Cell()
         {
             InitializeComponent();
         }

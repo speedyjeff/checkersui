@@ -14,9 +14,11 @@ namespace CheckersUi
         [STAThread]
         static void Main()
         {
+            CheckersUiWf.Boundary.CheckersCallBack =  new MyCheckersCallBack();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Checkers());
+            Application.Run(new CheckersUiWf.Checkers());
         }
     }
 }

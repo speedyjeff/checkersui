@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
+using static CheckersUiWf.Boundary;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
     partial class Checkers
     {
@@ -32,8 +33,8 @@ namespace CheckersUi
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1024, 824);
-            this.Text = "Checkers UI";
+            this.ClientSize = new System.Drawing.Size(ClientSizeWidth, ClientSizeHeight);
+            this.Text = AppName;
             this.DoubleBuffered = true;
 
             var panel = new TableLayoutPanel();
@@ -44,32 +45,41 @@ namespace CheckersUi
             Controls.Add(panel);
 
             // the board
-            Board = new Board(800, 800);
+            Board = new Board(BoardWidth, BoardHeight);
+            CheckersCallBack.BoardObj = Board;
             Board.OnSelected += Board_OnSelected;
-            Board.SetCellState(3, 2, CellState.Selected);
-
-            Board.AddSwoop(new Swoop()
-            {
-                From = new Location() { Row = 1, Col = 4 },
-                To = new Location() { Row = 3, Col = 2 }
-            });
-
             panel.Controls.Add(Board, 1, 0);
 
             // the previous moves section
-            Moves = new Moves(800, 200);
+            Moves = new Moves(MovesHeight, MovesWidth);
+            MovesCallBack.MovesObj = Moves;
             panel.Controls.Add(Moves, 0, 0);
+
+            // setup UI callbacks
+            KeyPreview = true;
+            KeyPress += OnKeyPressed;
+
+            // initialize call back interface 
+            CheckersCallBack.Initialize();
+            MovesCallBack.Initialize();
         }
 
-        private void Board_OnSelected(int row, int col)
+        private void OnKeyPressed(object sender, KeyPressEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("Cell {0},{1} selected", row, col);
+            CheckersCallBack.OnKeyPressed(e.KeyChar);
+            e.Handled = true;
+        }
+
+        //example of delegate event handler
+        private void Board_OnSelected(int row, int col, int square)
+        {
+            CheckersCallBack.BoardClick(row, col, square);
         }
 
         private Board Board;
         private Moves Moves;
 
-        #endregion
+#endregion
     }
 }
 

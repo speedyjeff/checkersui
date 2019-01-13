@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static CheckersUiWf.Boundary;
 
-namespace CheckersUi
+namespace CheckersUiWf
 {
-    public delegate void OnSelectedDelegate(int row, int col);
+    public delegate void OnClickDelegate(int row, int col, int square);
     public struct Location
     {
         public int Row;
@@ -26,26 +27,102 @@ namespace CheckersUi
             Height = height;
             IsDirty = false;
             Swoops = new Dictionary<int, Swoop>();
-            CellWidth = width / 8;
-            CellHeight = height / 8;
+            CellWidth = width / BoardColumnCount;
+            CellHeight = height / BoardRowCount;
             InitializeComponent();
         }
 
-        public event OnSelectedDelegate OnSelected;
+        public event OnClickDelegate OnSelected;
+
+        public void NewGame()
+        {
+            for (int square = 1; square <= NumberSquares; square++)
+            {
+                if (square <= NumberEachTeam)
+                {
+                    SetSquare(square, CellState.Black, HighLight.None);
+                }
+                else if (square >= NumberSquares - NumberEachTeam + 1)
+                {
+                    SetSquare(square, CellState.White, HighLight.None);
+                }
+                else
+                {
+                    SetSquare(square, CellState.Empty, HighLight.None);
+                }
+            }
+        }
+
+        public void SetSquare(int square, CellState state, HighLight highlight)
+        {
+            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            Squares[square].CellState = state;
+            Squares[square].HightLight = highlight;
+            Squares[square].Refresh();
+        }
+
+        public void SetSquareState(int square, CellState state)
+        {
+            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            Squares[square].CellState = state;
+            Squares[square].Refresh();
+        }
 
         public void SetCellState(int row, int col, CellState state)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) throw new Exception("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].CellState = state;
             Cells[row][col].Refresh();
+        }
+
+        public CellState GetSquareState(int square)
+        {
+            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            return Squares[square].CellState;
         }
 
         public CellState GetCellState(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) throw new Exception("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].CellState;
+        }
+
+        public void SetSquareHighLight (int square, HighLight highlight)
+        {
+            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            Squares[square].HightLight = highlight;
+            Squares[square].Refresh();
+        }
+
+        public void SetCellHightLight(int row, int col, HighLight hightlight)
+        {
+            if (row < 0 || row > Cells.Length ||
+                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+            Cells[row][col].HightLight = hightlight;
+            Cells[row][col].Refresh();
+        }
+
+        public HighLight GetSquareHighLight (int square)
+        {
+            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            return Squares[square].HightLight;
+        }
+
+        public HighLight GetCellHighLight(int row, int col)
+        {
+            if (row < 0 || row > Cells.Length ||
+                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+            return Cells[row][col].HightLight;
+        }
+
+        public int AddSwoop(int fromSquare, int toSquare)
+        {
+            if (fromSquare < 0 || fromSquare > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + fromSquare);
+            if (toSquare < 0 || toSquare > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + toSquare);
+
+            return AddSwoop (new Swoop() { From = SquareLocations[fromSquare], To = SquareLocations[toSquare] } );
         }
 
         public int AddSwoop(Swoop indicator)
@@ -121,7 +198,9 @@ namespace CheckersUi
                 case Direction.Up_Pointing_Right: bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
                 case Direction.Down_Pointing_Left: bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
                 case Direction.Down_Pointing_Right: bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
-                default: throw new Exception("Unknown direction : " + direction);
+                default:
+                    CheckersCallBack.Panic("Unknown direction : " + direction);
+                    break;
             }
             return bitmap;
         }
@@ -159,46 +238,56 @@ namespace CheckersUi
             Overlay.Owner = this;
             Overlay.Paint += Overlay_Paint;
 
-            // add grib
+            // add grid
             Table = new TableLayoutPanel();
             Table.Width = Width;
             Table.Height = Height;
-            Table.RowCount = 8;
-            Table.ColumnCount = 8;
+            Table.RowCount = BoardRowCount;
+            Table.ColumnCount = BoardColumnCount;
             Table.Margin = new Padding(0);
             Table.Padding = new Padding(0);
-
             this.Controls.Add(Table);
 
             // add cells
             Cells = new Cell[Table.RowCount][];
-            int activeNumber = 1; //only number active cells
+            Squares = new Cell[NumberSquares + 1];
+            Squares[0] = null;
+            SquareLocations = new Location[NumberSquares + 1];
+            SquareLocations[0] = new Location() { Row = 0, Col = 0 };
+            
+            int squareCounter = 1;
             for(int row = 0; row < Table.RowCount; row++)
             {
                 Cells[row] = new Cell[Table.ColumnCount];
                 for(int col=0; col< Table.ColumnCount; col++)
                 {
-                    int cellNumber = 0; //only active is numbered
-                    var state = CellState.Inative;
+                    int square = 0;
+                    var state = CellState.Inactive;
 
-                    if ((row % 2 != 0 && col % 2 == 0)
-                        ||
+                    if ((row % 2 != 0 && col % 2 == 0) ||
                         (row % 2 == 0 && col % 2 != 0))
                     {
-                        cellNumber = activeNumber++;
-                        if (row <= 2) state = CellState.Black;
-                        else if (row >= 5) state = CellState.Red;
-                        else state = CellState.Active;
+                        square = squareCounter++;
+                        if (WhiteOnTop) square = NumberSquares + 1 - square;
+                        state = CellState.Empty;
                     }
 
-                    Cells[row][col] = new Cell(
+                    Cell cell = new Cell(
                         state, 
-                        cellNumber,
+                        square,
                         CellHeight,
-                        CellWidth);
-                    Cells[row][col].MouseClick += Cell_MouseClick;
+                        CellWidth,
+                        HighLight.None);
+                    cell.MouseClick += Cell_MouseClick;
+                    cell.MouseDoubleClick += Cell_MouseDoubleClick;
+                    Cells[row][col] = cell;
+                    if (square != 0)
+                    {
+                        Squares[square] = cell;
+                        SquareLocations[square] = new Location() { Row = row, Col = col };
+                    }
 
-                    Table.Controls.Add(Cells[row][col], col, row);
+                    Table.Controls.Add(cell, col, row);
                 }
             }
         }
@@ -254,19 +343,30 @@ namespace CheckersUi
         private void Cell_MouseClick(object sender, MouseEventArgs e)
         {
             var cell = sender as Cell;
-            var row = Table.GetRow(cell);
-            var col = Table.GetColumn(cell);
+            var square = cell.Square;
+            if (square != 0) CheckersCallBack.MouseClick(square);
 
             if (OnSelected != null)
             {
-                OnSelected(row, col);
+                var row = Table.GetRow(cell);
+                var col = Table.GetColumn(cell);
+                OnSelected(row, col, square);
             }
+        }
+
+        private void Cell_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var cell = sender as Cell;
+            var square = cell.Square;
+            if (square != 0) CheckersCallBack.MouseDoubleClick(square);
         }
 
         enum Direction { Up = 1, Down = 2, Left = 4, Right = 8, Up_Pointing_Left = 5, Up_Pointing_Right = 9, Down_Pointing_Left = 6, Down_Pointing_Right = 10 };
 
         private TableLayoutPanel Table;
         private Cell[][] Cells;
+        private Cell[] Squares;
+        private Location[] SquareLocations;
         private int CellWidth;
         private int CellHeight;
         private GraphicalOverlay Overlay;
