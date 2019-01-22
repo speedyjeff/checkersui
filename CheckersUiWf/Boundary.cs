@@ -3,11 +3,14 @@
 namespace CheckersUiWf
 {
     /// <summary>
-    /// Common external interface
+    /// External interface
     /// </summary>
     public static partial class Boundary
     {
-        //Configuration
+        //Update the following with your sub class of CallBack
+        public static CallBack gCallBack = new CallBack();
+
+        //Application Configuration
         public static string AppName = "Checkers UI";
         public static bool WhiteOnTop = false; //board layout, which color top of screen
         public static int ClientSizeWidth = 1024;
@@ -16,17 +19,12 @@ namespace CheckersUiWf
         public static int BoardHeight = 800;
         public static int MovesWidth = 200;
         public static int MovesHeight = 800;
-    }
 
-    /// <summary>
-    /// Checkers external interface
-    /// </summary>
-    public enum CellState { Inactive, Empty, White, Black, WhiteKing, BlackKing};
-    public enum HighLight { Selected, Target, None };
-    public static partial class Boundary
-    {
-        //Update the following with your sub class of CallBack
-        public static CallBack_Checkers CheckersCallBack = new CallBack_Checkers();
+        /// <summary>
+        /// Board external interface
+        /// </summary>
+        public enum CellState { Inactive, Empty, White, Black, WhiteKing, BlackKing};
+        public enum HighLight { Selected, Target, None };
 
         //Constants
         public const int BoardRowCount = 8;
@@ -35,18 +33,27 @@ namespace CheckersUiWf
         public const int NumberEachTeam = 12;
         public const int InvalidSquare = -1;
         public const int InvalidSwoop = -1;
-    }
 
-    /// <summary>
-    /// Moves external interface
-    /// </summary>
-    public static partial class Boundary
-    {
-        //Update the following with your sub class of CallBack
-        public static CallBack_Moves MovesCallBack = new CallBack_Moves();
+        /// <summary>
+        /// Moves external interface
+        /// </summary>
+        public struct MoveId
+        {
+            public int move;        //Row number. First row = 1
+            public string color;    //Column header color (Black or White)
+
+            public MoveId(int imove = InvalidMove, string icolor = "")
+            {
+                move = imove;
+                color = icolor;
+            }
+        }
 
         //Configuration
-        public static string Word4White = "White";
-        public static string Word4Black = "Black";
+        public static string MoveColumn = "#";
+        public static string WhiteColumn = "White";
+        public static string BlackColumn = "Black";
+        public static int MoveColumnWidth = 25;
+        public const int InvalidMove = -1;
     }
 }

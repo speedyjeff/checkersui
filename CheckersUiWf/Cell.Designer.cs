@@ -140,7 +140,7 @@ namespace CheckersUiWf
                             g.DrawImage(Images[CellState.WhiteKing], 0, 0);
                             break;
                         default:
-                            CheckersCallBack.Panic("Invalid cell state : " + State);
+                            gCallBack.Panic("Invalid cell state : " + State);
                             break;
 
                     }

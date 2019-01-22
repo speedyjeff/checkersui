@@ -46,34 +46,39 @@ namespace CheckersUiWf
 
             // the board
             Board = new Board(BoardWidth, BoardHeight);
-            CheckersCallBack.BoardObj = Board;
+            gCallBack.BoardObj = Board;
             Board.OnSelected += Board_OnSelected;
             panel.Controls.Add(Board, 1, 0);
 
             // the previous moves section
             Moves = new Moves(MovesHeight, MovesWidth);
-            MovesCallBack.MovesObj = Moves;
+            gCallBack.MovesObj = Moves;
             panel.Controls.Add(Moves, 0, 0);
 
-            // setup UI callbacks
-            KeyPreview = true;
-            KeyPress += OnKeyPressed;
+            // other call back
+            KeyPreview = true; //so that OnKeyPress works
 
             // initialize call back interface 
-            CheckersCallBack.Initialize();
-            MovesCallBack.Initialize();
+            gCallBack.Initialize();
         }
 
-        private void OnKeyPressed(object sender, KeyPressEventArgs e)
+        protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            CheckersCallBack.OnKeyPressed(e.KeyChar);
-            e.Handled = true;
+            char key = e.KeyChar;
+            gCallBack.OnKeyPress(key);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            bool rc = gCallBack.ProcessCmdKey(keyData);
+            if (rc == false) rc = base.ProcessCmdKey(ref msg, keyData);
+            return rc;
         }
 
         //example of delegate event handler
         private void Board_OnSelected(int row, int col, int square)
         {
-            CheckersCallBack.BoardClick(row, col, square);
+            gCallBack.BoardClick(row, col, square);
         }
 
         private Board Board;

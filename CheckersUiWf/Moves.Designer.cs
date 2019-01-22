@@ -15,31 +15,57 @@ namespace CheckersUiWf
             InitializeComponent();
         }
 
-        public void AddRow(string white, string black)
+        public void AddRow(string black, string white)
         {
-            var row = Table.NewRow();
-            row[Word4White] = white;
-            row[Word4Black] = black;
-            Table.Rows.Add(row);
+//gCallBack.Trace(string.Format("Add count={0}", Count));
+            string[] row = { (Count+1).ToString() + ".", black, white };
+            Grid.Rows.Add(row);
         }
 
-        public void UpdateRow(int index, string white, string black)
+        public void SetMoveText(MoveId moveId, string value)
         {
-            if (index < 0 || index >= Count) CheckersCallBack.Panic("Invalid row index : " + index);
-            Table.Rows[index][Word4White] = white;
-            Table.Rows[index][Word4Black] = black;
+            if (moveId.move < 0 ) gCallBack.Panic("Invalid row index : " + moveId.move);
+            while (moveId.move > Count)
+            {
+                AddRow("", "");
+            }
+//gCallBack.Trace(string.Format("set count={0} row={1} column={2} value={3}",
+//  Count, moveId.move, moveId.color, value));
+            Grid[moveId.color, moveId.move - 1].Value = value;
         }
 
-        public void GetRow(int index, out string white, out string black)
+        public string GetMoveText(MoveId moveId)
         {
-            if (index < 0 || index >= Count) CheckersCallBack.Panic("Invalid row index : " + index);
-            white = (string)Table.Rows[index][Word4White];
-            black = (string)Table.Rows[index][Word4Black];
+            string text = "";
+            if (moveId.move < 1) moveId.move = 1;
+            else if (moveId.move > Count) moveId.move = Count;
+            text = (string)Grid[moveId.color, moveId.move -1].Value;
+            return text;
         }
 
-        public int Count { get { return Table.Rows.Count; } }
+        public void SetCurrentMove(MoveId moveId)
+        {
+            if (moveId.move < 1) moveId.move = 1;
+            else if (moveId.move > Count) moveId.move = Count;
+            Grid.CurrentCell = Grid[moveId.color, moveId.move - 1];
+        }
 
-        #region private
+        public MoveId GetCurrentMove()
+        {
+            MoveId moveId = new MoveId();
+//gCallBack.Trace(string.Format("GetCurrentMove move={0} column={1}", move, column));
+            if (Count > 1)
+            {
+                moveId.move = Grid.CurrentCell.RowIndex + 1;
+                int col = Grid.CurrentCell.ColumnIndex;
+                moveId.color = Grid.Columns[col].Name;
+            }
+            return moveId;
+        }
+
+        public int Count { get { return Grid.Rows.Count; } }
+
+#region private
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -67,29 +93,97 @@ namespace CheckersUiWf
             components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 
+#if false //WHSWHS
             var data = new DataSet("Previous");
 
             // create a DataTable
             Table = new DataTable("Moves");
 
             // Create two columns and add table to dataset
-            DataColumn white = new DataColumn(Word4White, typeof(string));
-            DataColumn black = new DataColumn(Word4Black, typeof(string));
-            Table.Columns.Add(black); //black moves first and goes in the left column (first add)
+            DataColumn move = new DataColumn(MoveColumn, typeof(string));
+            move.ReadOnly = true;
+            DataColumn black = new DataColumn(BlackColumn, typeof(string));
+            DataColumn white = new DataColumn(WhiteColumn, typeof(string));
+            Table.Columns.Add(move);
+            Table.Columns.Add(black);
             Table.Columns.Add(white);
             data.Tables.Add(Table);
 
             var grid = new DataGrid();
             grid.Size = new Size(Width, Height);
             grid.SetDataBinding(data, "Moves");
-
+            grid.PreferredColumnWidth = (int)((double)MovesWidth / 4) ;
             Controls.Add(grid);
+#else
+            var data = new DataSet("Previous");
+
+#if false //WHSWHS
+            // create a DataTable
+            Table = new DataTable("Moves");
+
+            // Create two columns and add table to dataset
+            DataColumn move = new DataColumn(MoveColumn, typeof(string));
+            move.ReadOnly = true;
+            DataColumn black = new DataColumn(BlackColumn, typeof(string));
+            DataColumn white = new DataColumn(WhiteColumn, typeof(string));
+            Table.Columns.Add(move);
+            Table.Columns.Add(black);
+            Table.Columns.Add(white);
+            data.Tables.Add(Table);
+#endif
+
+            Grid = new MyDataGridView();
+            Grid.Name = "Moves"; //WHSWHS no?
+            Grid.Size = new Size(Width, Height);
+            Grid.AllowUserToAddRows = false;
+            Grid.AllowUserToDeleteRows = false;
+            Grid.ColumnCount = 3;
+            int w = (MovesWidth - MoveColumnWidth - 42/*width of left strip*/) / 2;
+            Grid.Columns[0].Name = MoveColumn;
+            Grid.Columns[0].ReadOnly = true;
+            Grid.Columns[0].Width = MoveColumnWidth;
+            Grid.Columns[1].Name = BlackColumn;
+            Grid.Columns[1].Width = w;
+            Grid.Columns[1].ReadOnly = true;
+            Grid.Columns[2].Name = WhiteColumn;
+            Grid.Columns[2].Width = w;
+            Grid.Columns[2].ReadOnly = true;
+
+            //Grid.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //Grid.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //Grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            //Grid.ScrollBars = ScrollBars.Both;
+            //Grid.DataSource = Table;
+            //Grid.Dock = DockStyle.;
+            //Table.AutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //Grid.AutoSizeColumnMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //grid.SetDataBinding(data, "Moves");
+            //grid.PreferredColumnWidth = (int)((double)MovesWidth / 4.25) ;
+            Controls.Add(Grid);
+#endif
         }
 
-        private DataTable Table;
-        #endregion
+        private DataGridView Grid; //WHSWHS
+        //WHSWHS private DataTable Table;
+#endregion
     }
 
+    public class MyDataGridView : DataGridView
+    {
+        public MyDataGridView() { }
+
+        protected override void OnCellClick(DataGridViewCellEventArgs e)
+        {
+            bool rc = false;
+            int row = e.RowIndex;
+            int col = e.ColumnIndex;
+            if (col > 0 && row >= 0)
+            {
+                rc = gCallBack.MoveClick(new MoveId(row + 1, this.Columns[col].Name));
+            }
+            if (!rc) base.OnCellClick(e);
+        }
+    }
 
 }
 

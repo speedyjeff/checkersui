@@ -50,8 +50,6 @@
     </Compile>
     <Compile Include="Boundary.cs" />
     <Compile Include="CallBack.cs" />
-    <Compile Include="CallBack_Checkers.cs" />
-    <Compile Include="CallBack_Moves.cs" />
     <Compile Include="Cell.cs">
       <SubType>UserControl</SubType>
     </Compile>

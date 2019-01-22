@@ -8,6 +8,7 @@ using static CheckersUiWf.Boundary;
 namespace CheckersUiWf
 {
     public delegate void OnClickDelegate(int row, int col, int square);
+
     public struct Location
     {
         public int Row;
@@ -55,7 +56,7 @@ namespace CheckersUiWf
 
         public void SetSquare(int square, CellState state, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
@@ -63,7 +64,7 @@ namespace CheckersUiWf
 
         public void SetSquareState(int square, CellState state)
         {
-            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].Refresh();
         }
@@ -71,27 +72,27 @@ namespace CheckersUiWf
         public void SetCellState(int row, int col, CellState state)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].CellState = state;
             Cells[row][col].Refresh();
         }
 
         public CellState GetSquareState(int square)
         {
-            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
             return Squares[square].CellState;
         }
 
         public CellState GetCellState(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].CellState;
         }
 
         public void SetSquareHighLight (int square, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
         }
@@ -99,28 +100,28 @@ namespace CheckersUiWf
         public void SetCellHightLight(int row, int col, HighLight hightlight)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].HightLight = hightlight;
             Cells[row][col].Refresh();
         }
 
         public HighLight GetSquareHighLight (int square)
         {
-            if (square < 0 || square > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
             return Squares[square].HightLight;
         }
 
         public HighLight GetCellHighLight(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CheckersCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].HightLight;
         }
 
         public int AddSwoop(int fromSquare, int toSquare)
         {
-            if (fromSquare < 0 || fromSquare > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + fromSquare);
-            if (toSquare < 0 || toSquare > NumberSquares) CheckersCallBack.Panic("Invalid square number: " + toSquare);
+            if (fromSquare < 0 || fromSquare > NumberSquares) gCallBack.Panic("Invalid square number: " + fromSquare);
+            if (toSquare < 0 || toSquare > NumberSquares) gCallBack.Panic("Invalid square number: " + toSquare);
 
             return AddSwoop (new Swoop() { From = SquareLocations[fromSquare], To = SquareLocations[toSquare] } );
         }
@@ -167,6 +168,14 @@ namespace CheckersUiWf
             return true;
         }
 
+        public void RemoveAllSwoops()
+        {
+            lock (Swoops)
+            {
+                Swoops.Clear();
+            }
+        }
+
 #region private
         static Board()
         {
@@ -199,7 +208,7 @@ namespace CheckersUiWf
                 case Direction.Down_Pointing_Left: bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
                 case Direction.Down_Pointing_Right: bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
                 default:
-                    CheckersCallBack.Panic("Unknown direction : " + direction);
+                    gCallBack.Panic("Unknown direction : " + direction);
                     break;
             }
             return bitmap;
@@ -294,6 +303,7 @@ namespace CheckersUiWf
 
         private void Overlay_Paint(object sender, PaintEventArgs e)
         {
+//System.Diagnostics.Debug.WriteLine("Overlay_Paint " + IsDirty.ToString());
             // add the overlay swoops as necessary
             if (IsDirty || DoubleBuffer == null)
             {
@@ -305,7 +315,7 @@ namespace CheckersUiWf
                     lock(Swoops)
                     {
                         // foreach swoop indicator add a swoop to the screen
-                        foreach(var indicator in Swoops.Values)
+                        foreach (var indicator in Swoops.Values)
                         {
                             // determine where to place the swoop
                             var direction = Direction.Up;
@@ -344,7 +354,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) CheckersCallBack.MouseClick(square);
+            if (square != 0) gCallBack.MouseClick(square);
 
             if (OnSelected != null)
             {
@@ -358,7 +368,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) CheckersCallBack.MouseDoubleClick(square);
+            if (square != 0) gCallBack.MouseDoubleClick(square);
         }
 
         enum Direction { Up = 1, Down = 2, Left = 4, Right = 8, Up_Pointing_Left = 5, Up_Pointing_Right = 9, Down_Pointing_Left = 6, Down_Pointing_Right = 10 };

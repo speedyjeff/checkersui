@@ -7,47 +7,49 @@
 
 Update the images under CheckersUi\Media
 
+## CheckersUiWf
+
+Winows Form Contol Library. 
+
+External interface in Boundary.cs
+Sub class CallBack to override events and support functions.
+
+Playable squares are numbered 1 to 32.
+Previous moves table accessed by move number and color (MoveId).
+
 ## Board
 
 Initialization
 ```C#
 Board = new Board(800 /* height */, 800 /* width */);
-Board.OnSelected += Board_OnSelected;
+```
 
-private void Board_OnSelected(int row, int col)
+Call back on mouse click on a playable sqaure
+```C#
+public virtual void MouseClick(int square)
 {
-    System.Diagnostics.Debug.WriteLine("Cell {0},{1} selected", row, col);
+    Trace("MouseClick Square " + square.ToString());
 }
 ```
 
 Set the various states of the board
 ```C#
-public enum CellState { Inative, Active, Red, Black, RedKing, BlackKing, Selected };
-Board.SetCellState(row, col, CellState.Selected);
-```
-
-Get Cell state
-```C#
-CellState state = Board.GetCellState(row, col);
+public enum CellState { Inative, Empty, White, Black, WhiteKing, BlackKing};
+public enum HighLight { Selected, Target, None };
+int selected = 15;
+int take = 18;
+int target = 22;
+SetSquareHighLight(selected, HighLight.Selected);
+SetSquareHighLight(target, HighLight.Target);
+SetSquare(take, CellState.White, HighLight.None);
 ```
 
 Add a swoop indicator on a move over a piece
 ```C#
-var index = Board.AddSwoop(new Swoop()
-{
-    From = new Location() { Row = 1, Col = 3 },
-    To = new Location() { Row = 3, Col = 1 }
-});
-```
+int fromSquare = 15;
+int toSquare = 22;
+var index = AddSwoop(new Swoop(fromSquare, toSquare));
 
-Get a active swoop
-```C#
-var swoop = Board.GetSwoop(index);
-```
-
-Remove a swoop
-```C#
-if (Board.RemoveSwoop(index)) ...
 ```
 
 ## Previous Moves
@@ -56,29 +58,27 @@ Initialization
 ```C#
 Moves = new Moves(800 /* height */, 200 /* width */);
 ```
+Call back for a selecting a move, by mouse or arrow keys
+```C#
+public virtual void MoveSelect(MoveId moveId)
+{
+    Trace(String.Format("MoveSelect move={0} column={1}",
+          moveId.move, moveId.color ));
+}
+```
 
 Add a row
 ```C#
-string red = "";
-string black = "";
-Moves.AddRow(red, black);
+Moves.AddMoveRow("11-15", "22-18");
 ```
 
-Get the row count
+Get the number of moves (row count)
 ```C#
-int count = Moves.Count;
+int count = GetMoveCount();
 ```
 
-Update a row
+Update a move
 ```C#
-string red = "";
-string black = "";
-Moves.UpdateRow(Moves.Count - 1, red, black);
+SetMoveText(new MoveId(2, BlackColumn, "(15x22)");
 ```
 
-Get row content
-```C#
-string red = "";
-string black = "";
-Moves.GetRow(Moves.Count - 1, out red, out black);
-```

@@ -1,9 +1,11 @@
-﻿using CheckersUiWf;
+﻿using System;
+using CheckersUiWf;
+using System.Windows.Forms;
 using static CheckersUiWf.Boundary;
 
 namespace CheckersUi
 {
-    public class MyCheckersCallBack: CallBack_Checkers
+    public class MyCheckersCallBack: CallBack
     {
         public MyCheckersCallBack() { }
 
@@ -19,9 +21,17 @@ namespace CheckersUi
             Trace("MyCallBack Initialize");
 
             NewGame();
+            SetSquareState(15, CellState.Black);
+            SetSquareState(11, CellState.Empty);
+            SetSquareState(18, CellState.White);
+            SetSquareState(22, CellState.Empty);
             SetSquareHighLight(Selected, HighLight.Selected);
             SetSquareHighLight(Target, HighLight.Target);
             Swoop = AddSwoop(Selected, Target);
+            SetMoveText(new MoveId(1, BlackColumn), "11-15");
+            SetMoveText(new MoveId(1, WhiteColumn), "22-18");
+            SetMoveText(new MoveId(2, BlackColumn), "(15x22)");
+            SetCurrentMove(new MoveId(2, BlackColumn));
         }
 
         public override void MouseClick(int square)
@@ -83,20 +93,32 @@ namespace CheckersUi
             }
         }
 
-        public override void OnKeyPressed(char key)
+        public override void OnKeyPress(char key)
         {
-            Trace("OnKeyPressed " + key.ToString());
+            Trace("OnKeyPress " + key);
 
-            if (key == 'x' && Selected != InvalidSquare)
+            switch (key)
             {
-                SetSquare(Selected, CellState.Empty, HighLight.None);
-                Selected = InvalidSquare;
-                if (Swoop != InvalidSwoop)
-                {
-                    RemoveSwoop(Swoop);
-                    Swoop = InvalidSwoop;
-                }
+                case 'x':
+                case 'X':
+                    if (Selected != InvalidSquare)
+                    {
+                        SetSquare(Selected, CellState.Empty, HighLight.None);
+                        Selected = InvalidSquare;
+                        if (Swoop != InvalidSwoop)
+                        {
+                            RemoveSwoop(Swoop);
+                            Swoop = InvalidSwoop;
+                        }
+                    }
+                    break;
             }
+        }
+
+        public override void MoveSelect(MoveId moveId)
+        {
+            Trace(String.Format("MoveSelect move={0} column={1}",
+                moveId.move, moveId.color));
         }
 
         public override void MouseDoubleClick(int square)
@@ -120,8 +142,8 @@ namespace CheckersUi
             }
         }
 
-        private int Selected = 7;
-        private int Target = 14;
+        private int Selected = 15;
+        private int Target = 22;
         private int Swoop = InvalidSwoop;
     }
 }
