@@ -62,6 +62,9 @@
     <Compile Include="Checkers.Designer.cs">
       <DependentUpon>Checkers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Checkers.Menu.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GraphicalOverlay.cs">
       <SubType>Component</SubType>
     </Compile>

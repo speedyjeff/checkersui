@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CheckersUiWf;
 using System.Windows.Forms;
 using static CheckersUiWf.Boundary;
@@ -32,6 +33,47 @@ namespace CheckersUi
             SetMoveText(new MoveId(1, WhiteColumn), "22-18");
             SetMoveText(new MoveId(2, BlackColumn), "(15x22)");
             SetCurrentMove(new MoveId(2, BlackColumn));
+            UpdateLeftStatus("Black to move");
+            UpdateRightStatus("Black (12) White (12)");
+        }
+
+        public override void InitializeMenu(MenuStrip menuStrip1)
+        {
+            // newGameToolStripMenuItem
+            var newGameToolStripMenuItem = new ToolStripMenuItem();
+            newGameToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            newGameToolStripMenuItem.Name = "New Game";
+            newGameToolStripMenuItem.Text = "&New Game";
+
+            // undoToolStripMenuItem
+            var undoToolStripMenuItem = new ToolStripMenuItem();
+            undoToolStripMenuItem.Name = "Undo";
+            undoToolStripMenuItem.ShortcutKeys = ((Keys)((Keys.Control | Keys.Z)));
+            undoToolStripMenuItem.Text = "&Undo";
+
+            // gameToolStripMenuItem
+            var gameToolStripMenuItem = new ToolStripMenuItem();
+            gameToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
+                newGameToolStripMenuItem,
+                undoToolStripMenuItem});
+            gameToolStripMenuItem.Text = "&Game";
+
+            // menuStrip1
+            menuStrip1.Items.Add(gameToolStripMenuItem);
+        }
+
+        public override bool ToolStripMenuItem_DropDownItemClicked(
+            object sender, ToolStripItemClickedEventArgs e)
+        {
+            bool handled = false;
+            switch (e.ClickedItem.Name)
+            {
+                case OpenMenuItemName:
+                    OpenFile();
+                    handled = true;
+                    break;
+            }
+            return handled;
         }
 
         public override void MouseClick(int square)
@@ -142,8 +184,38 @@ namespace CheckersUi
             }
         }
 
+        #region private
+        private void OpenFile()
+        {
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = "c:\\";
+                openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    //Get the path of specified file
+                    filePath = openFileDialog.FileName;
+
+                    //Read the contents of the file into a stream
+                    var fileStream = openFileDialog.OpenFile();
+
+                    using (StreamReader reader = new StreamReader(fileStream))
+                    {
+                        fileContent = reader.ReadToEnd();
+                    }
+                }
+            }
+            MessageBox.Show(fileContent, "File Content at path: " + filePath, MessageBoxButtons.OK);
+        }
+
         private int Selected = 15;
         private int Target = 22;
         private int Swoop = InvalidSwoop;
+        #endregion
     }
 }
