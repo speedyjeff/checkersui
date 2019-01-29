@@ -14,11 +14,13 @@ namespace CheckersUiWf
         public static string AppName = "Checkers UI";
         public static bool WhiteOnTop = false; //board layout, which color top of screen
         public static int ClientSizeWidth = 1024;
-        public static int ClientSizeHeight = 824;
+        public static int ClientSizeHeight = 850 + 4; //includes menu, status, and padding/margin 
         public static int BoardWidth = 800;
         public static int BoardHeight = 800;
         public static int MovesWidth = 200;
         public static int MovesHeight = 800;
+        public static int StatusHeight = 25;
+        public static int MenuHeight = 25;
 
         /// <summary>
         /// Board external interface
@@ -55,5 +57,12 @@ namespace CheckersUiWf
         public static string BlackColumn = "Black";
         public static int MoveColumnWidth = 25;
         public const int InvalidMove = -1;
+
+        /// <summary>
+        /// Menus external interface
+        /// </summary>
+        public const string OpenMenuItemName = "OpenMenuItemName";
+        public const string ExitMenuItemName = "ExitMenuItemName";
+
     }
 }

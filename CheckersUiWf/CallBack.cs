@@ -13,6 +13,9 @@ namespace CheckersUiWf
         {
             Trace("Initialize");
         }
+        public virtual void InitializeMenu(MenuStrip menuStrip1)
+        {
+        }
         public virtual void Trace(string text)
         {
             System.Diagnostics.Debug.WriteLine(text);
@@ -114,6 +117,22 @@ namespace CheckersUiWf
             }
 
             return rc;
+        }
+        public virtual bool ToolStripMenuItem_DropDownItemClicked(
+            object sender, ToolStripItemClickedEventArgs e)
+        {
+            bool handled = false;
+            return handled;
+        }
+        #endregion
+        # region Application Support
+        public virtual void UpdateLeftStatus (string text)
+        {
+            CheckersObj.UpdateLeftStatus(text);
+        }
+        public virtual void UpdateRightStatus (string text)
+        {
+            CheckersObj.UpdateRightStatus(text);
         }
         #endregion
         #region Board Callbacks
@@ -272,6 +291,7 @@ namespace CheckersUiWf
         }
         #endregion
 
+        internal Checkers CheckersObj = null;
         internal Board BoardObj = null;
         internal Moves MovesObj = null;
     }
