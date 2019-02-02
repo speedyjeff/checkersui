@@ -3,26 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using static CheckersUiWf.Boundary;
+using static CheckersUiWf.ExtInterface;
+using static CheckersUiWf.IntInterface;
 
 namespace CheckersUiWf
 {
     public delegate void OnClickDelegate(int row, int col, int square);
 
-    public struct Location
+    partial class BoardUct
     {
-        public int Row;
-        public int Col;
-    }
-    public struct Swoop
-    {
-        public Location From;
-        public Location To;
-    }
-
-    partial class Board
-    {
-        public Board(int width, int height)
+        internal BoardUct(int width, int height)
         {
             Width = width;
             Height = height;
@@ -33,9 +23,9 @@ namespace CheckersUiWf
             InitializeComponent();
         }
 
-        public event OnClickDelegate OnSelected;
+        internal event OnClickDelegate OnSelected;
 
-        public void NewGame()
+        internal void NewGame()
         {
             for (int square = 1; square <= NumberSquares; square++)
             {
@@ -54,79 +44,84 @@ namespace CheckersUiWf
             }
         }
 
-        public void SetSquare(int square, CellState state, HighLight highlight)
+        internal void SetSquare(int square, CellState state, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
         }
 
-        public void SetSquareState(int square, CellState state)
+        internal void SetSquareState(int square, CellState state)
         {
-            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].Refresh();
         }
 
-        public void SetCellState(int row, int col, CellState state)
+        internal void SetCellState(int row, int col, CellState state)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].CellState = state;
             Cells[row][col].Refresh();
         }
 
-        public CellState GetSquareState(int square)
+        internal CellState GetSquareState(int square)
         {
-            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
             return Squares[square].CellState;
         }
 
-        public CellState GetCellState(int row, int col)
+        internal CellState GetCellState(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].CellState;
         }
 
-        public void SetSquareHighLight (int square, HighLight highlight)
+        internal void SetSquareHighLight (int square, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
         }
 
-        public void SetCellHightLight(int row, int col, HighLight hightlight)
+        internal void SetCellHightLight(int row, int col, HighLight hightlight)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].HightLight = hightlight;
             Cells[row][col].Refresh();
         }
 
-        public HighLight GetSquareHighLight (int square)
+        internal HighLight GetSquareHighLight (int square)
         {
-            if (square < 0 || square > NumberSquares) gCallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
             return Squares[square].HightLight;
         }
 
-        public HighLight GetCellHighLight(int row, int col)
+        internal HighLight GetCellHighLight(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) gCallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].HightLight;
         }
 
-        public int AddSwoop(int fromSquare, int toSquare)
+        internal int AddSwoop(int fromSquare, int toSquare)
         {
-            if (fromSquare < 0 || fromSquare > NumberSquares) gCallBack.Panic("Invalid square number: " + fromSquare);
-            if (toSquare < 0 || toSquare > NumberSquares) gCallBack.Panic("Invalid square number: " + toSquare);
+            if (fromSquare < 0 || fromSquare > NumberSquares) CallBack.Panic("Invalid square number: " + fromSquare);
+            if (toSquare < 0 || toSquare > NumberSquares) CallBack.Panic("Invalid square number: " + toSquare);
 
+            if (Config.ColorOnTop == CheckerColor.White)
+            {
+                fromSquare = NumberSquares - fromSquare + 1;
+                toSquare = NumberSquares - toSquare + 1;
+            }
             return AddSwoop (new Swoop() { From = SquareLocations[fromSquare], To = SquareLocations[toSquare] } );
         }
 
-        public int AddSwoop(Swoop indicator)
+        internal int AddSwoop(Swoop indicator)
         {
             var index = 0;
             lock(Swoops)
@@ -145,7 +140,7 @@ namespace CheckersUiWf
             return index;
         }
 
-        public bool GetSwoop(int index, out Swoop indicator)
+        internal bool GetSwoop(int index, out Swoop indicator)
         {
             lock(Swoops)
             {
@@ -153,7 +148,7 @@ namespace CheckersUiWf
             }
         }
 
-        public bool RemoveSwoop(int index)
+        internal bool RemoveSwoop(int index)
         {
             lock (Swoops)
             {
@@ -168,16 +163,97 @@ namespace CheckersUiWf
             return true;
         }
 
-        public void RemoveAllSwoops()
+        internal void RemoveAllSwoops()
         {
             lock (Swoops)
             {
                 Swoops.Clear();
             }
+            IsDirty = true;
+            Refresh();
+        }
+
+        internal string[] CellNumbers
+        {
+            get
+            {
+                return Cell.CellNumbers;
+            }
+            set
+            {
+                Cell.CellNumbers = value;
+                foreach (Cell cell in Squares)
+                {
+                    if (cell != null) cell.Dirty = true;
+                }
+                IsDirty = true;
+                Refresh();
+            }
+        }
+
+        internal bool SetColorOnTop(CheckerColor color)
+        {
+            bool change = false;
+
+            int squareOnTop = Cells[0][1].Square;
+
+            if ((squareOnTop == 1 && color == CheckerColor.White) ||   //black on top
+                (squareOnTop != 1 && color == CheckerColor.Black))
+            {
+                change = true;
+                Config.ColorOnTop = color;
+
+                for (int square1 = 1; square1 <= (NumberSquares / 2); square1++)
+                {
+                    int square2 = NumberSquares - square1 + 1;
+
+                    Cell cell1 = Squares[square1];
+                    int number1 = Squares[square1].Square;
+                    HighLight highLight1 = Squares[square1].HightLight;
+                    CellState state1 = Squares[square1].CellState;
+
+                    Cell cell2 = Squares[square2];
+                    int number2 = Squares[square2].Square;
+                    HighLight highLight2 = Squares[square2].HightLight;
+                    CellState state2 = Squares[square2].CellState;
+
+                    Squares[square1].Square = number2;
+                    Squares[square1].HightLight = highLight2;
+                    Squares[square1].CellState = state2;
+                    Squares[square1].Refresh();
+
+                    Squares[square2].Square = number1;
+                    Squares[square2].HightLight = highLight1;
+                    Squares[square2].CellState = state1;
+                    Squares[square2].Refresh();
+
+                    Squares[square1] = cell2;
+                    Squares[square2] = cell1;
+                }
+                // flip the swoops
+                lock (Swoops)
+                {
+                    List<int> swoopList = new List<int>();
+                    foreach (int key in Swoops.Keys) swoopList.Add(key);
+                    foreach (int key in swoopList)
+                    {
+                        var swoop = Swoops[key];
+                        swoop.From.Row = BoardRowCount - swoop.From.Row - 1;
+                        swoop.From.Col = BoardColumnCount - swoop.From.Col - 1;
+                        swoop.To.Row = BoardRowCount - swoop.To.Row - 1;
+                        swoop.To.Col = BoardColumnCount - swoop.To.Col - 1;
+                        Swoops[key] = swoop;
+                    }
+                }
+                IsDirty = true;
+                Refresh();
+            }
+
+            return change;
         }
 
 #region private
-        static Board()
+        static BoardUct()
         {
             // load the swoop images
             SwoopImages = new Dictionary<Direction, Bitmap>();
@@ -208,7 +284,7 @@ namespace CheckersUiWf
                 case Direction.Down_Pointing_Left: bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
                 case Direction.Down_Pointing_Right: bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
                 default:
-                    gCallBack.Panic("Unknown direction : " + direction);
+                    CallBack.Panic("Unknown direction : " + direction);
                     break;
             }
             return bitmap;
@@ -277,7 +353,7 @@ namespace CheckersUiWf
                         (row % 2 == 0 && col % 2 != 0))
                     {
                         square = squareCounter++;
-                        if (WhiteOnTop) square = NumberSquares + 1 - square;
+                        if (Config.ColorOnTop == CheckerColor.White) square = NumberSquares + 1 - square;
                         state = CellState.Empty;
                     }
 
@@ -354,7 +430,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) gCallBack.MouseClick(square);
+            if (square != 0) CallBack.MouseClick(square);
 
             if (OnSelected != null)
             {
@@ -368,7 +444,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) gCallBack.MouseDoubleClick(square);
+            if (square != 0) CallBack.MouseDoubleClick(square);
         }
 
         enum Direction { Up = 1, Down = 2, Left = 4, Right = 8, Up_Pointing_Left = 5, Up_Pointing_Right = 9, Down_Pointing_Left = 6, Down_Pointing_Right = 10 };

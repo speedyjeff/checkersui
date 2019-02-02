@@ -2,11 +2,11 @@
 using System.IO;
 using CheckersUiWf;
 using System.Windows.Forms;
-using static CheckersUiWf.Boundary;
+using static CheckersUiWf.ExtInterface;
 
 namespace CheckersUi
 {
-    public class MyCheckersCallBack: CallBack
+    public class MyCheckersCallBack: CallBackCls
     {
         public MyCheckersCallBack() { }
 
@@ -15,30 +15,40 @@ namespace CheckersUi
             System.Diagnostics.Debug.WriteLine("MyCallBack: " + text);
         }
 
-        public override void Initialize()
+        public override void InitializeCallout(MenuStrip menuStrip1)
         {
-            base.Initialize();
+            //
+            // File Menu
+            //
+            // openToolStripMenuItem
+            var openToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            openToolStripMenuItem.Name = FileOpen;
+            openToolStripMenuItem.ShortcutKeys = ((Keys)((Keys.Control | Keys.O)));
+            openToolStripMenuItem.Text = "&Open";
 
-            Trace("MyCallBack Initialize");
+            // toolStripSeparator1
+            var toolStripSeparator1 = new ToolStripSeparator();
+            toolStripSeparator1.Name = "toolStripSeparator1";
 
-            NewGame();
-            SetSquareState(15, CellState.Black);
-            SetSquareState(11, CellState.Empty);
-            SetSquareState(18, CellState.White);
-            SetSquareState(22, CellState.Empty);
-            SetSquareHighLight(Selected, HighLight.Selected);
-            SetSquareHighLight(Target, HighLight.Target);
-            Swoop = AddSwoop(Selected, Target);
-            SetMoveText(new MoveId(1, BlackColumn), "11-15");
-            SetMoveText(new MoveId(1, WhiteColumn), "22-18");
-            SetMoveText(new MoveId(2, BlackColumn), "(15x22)");
-            SetCurrentMove(new MoveId(2, BlackColumn));
-            UpdateLeftStatus("Black to move");
-            UpdateRightStatus("Black (12) White (12)");
-        }
+            // exitToolStripMenuItem
+            var exitToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem.Name = FileExit;
+            exitToolStripMenuItem.Text = "E&xit";
 
-        public override void InitializeMenu(MenuStrip menuStrip1)
-        {
+            // fileToolStripMenuItem
+            var fileToolStripMenuItem = new ToolStripMenuItem();
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
+                openToolStripMenuItem,
+                toolStripSeparator1,
+                exitToolStripMenuItem});
+            fileToolStripMenuItem.Text = "&File";
+
+            menuStrip1.Items.Add(fileToolStripMenuItem);
+
+            //
+            // Game Menu
+            //
             // newGameToolStripMenuItem
             var newGameToolStripMenuItem = new ToolStripMenuItem();
             newGameToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -60,6 +70,22 @@ namespace CheckersUi
 
             // menuStrip1
             menuStrip1.Items.Add(gameToolStripMenuItem);
+
+            // Set up example
+            NewGame();
+            SetSquareState(15, CellState.Black);
+            SetSquareState(11, CellState.Empty);
+            SetSquareState(18, CellState.White);
+            SetSquareState(22, CellState.Empty);
+            SetSquareHighLight(Selected, HighLight.Selected);
+            SetSquareHighLight(Target, HighLight.Target);
+            Swoop = AddSwoop(Selected, Target);
+            SetMoveText(new MoveId(1, CheckerColor.Black), "11-15");
+            SetMoveText(new MoveId(1, CheckerColor.White), "22-18");
+            SetMoveText(new MoveId(2, CheckerColor.Black), "(15x22)");
+            SetCurrentMove(new MoveId(2, CheckerColor.Black));
+            UpdateLeftStatus("Black to move");
+            UpdateRightStatus("Black (12) White (12)");
         }
 
         public override bool ToolStripMenuItem_DropDownItemClicked(
@@ -68,11 +94,17 @@ namespace CheckersUi
             bool handled = false;
             switch (e.ClickedItem.Name)
             {
-                case OpenMenuItemName:
+                case FileOpen:
                     OpenFile();
                     handled = true;
                     break;
+                case FileExit:
+                    Application.Exit();
+                    handled = true;
+                    break;
             }
+            UpdateLeftStatus(String.Format("{0} selected", e.ClickedItem.Text));
+
             return handled;
         }
 
@@ -154,13 +186,15 @@ namespace CheckersUi
                         }
                     }
                     break;
+                case 'n':
+                case 'N':
+                    UpdateCellNumbers(RowColumn);
+                    break;
+                case 'b':
+                case 'B':
+                    OutPut("************************************");
+                    break;
             }
-        }
-
-        public override void MoveSelect(MoveId moveId)
-        {
-            Trace(String.Format("MoveSelect move={0} column={1}",
-                moveId.move, moveId.color));
         }
 
         public override void MouseDoubleClick(int square)
@@ -213,9 +247,20 @@ namespace CheckersUi
             MessageBox.Show(fileContent, "File Content at path: " + filePath, MessageBoxButtons.OK);
         }
 
+        private const string FileOpen = "FileOpen";
+        private const string FileExit = "FileExit";
         private int Selected = 15;
         private int Target = 22;
         private int Swoop = InvalidSwoop;
+        
+        private static string[] RowColumn =
+        {
+            "",
+            "B8","D8","F8","H8","A7","C7","E7","G7",
+            "B6","D6","F6","H6","A5","C5","E5","G5",
+            "B4","D4","F4","H4","A3","C3","E3","G3",
+            "B2","D2","F2","H2","A1","C1","E1","G1",
+        }; 
         #endregion
     }
 }

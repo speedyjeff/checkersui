@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static CheckersUiWf.ExtInterface;
 
 namespace CheckersUi
 {
@@ -14,11 +15,11 @@ namespace CheckersUi
         [STAThread]
         static void Main()
         {
-            CheckersUiWf.Boundary.gCallBack =  new MyCheckersCallBack();
+            SetCallBack(new MyCheckersCallBack());
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CheckersUiWf.Checkers());
+            Application.Run(new CheckersUiWf.CheckersFrm());
         }
     }
 }

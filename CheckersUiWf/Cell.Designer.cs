@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using static CheckersUiWf.Boundary;
+using static CheckersUiWf.ExtInterface;
+using static CheckersUiWf.IntInterface;
 
 namespace CheckersUiWf
 {
@@ -35,7 +36,7 @@ namespace CheckersUiWf
             Images.Add(CellState.WhiteKing, Images[CellState.BlackKing]);
         }
 
-        public CellState CellState
+        internal CellState CellState
         {
             get
             {
@@ -51,7 +52,7 @@ namespace CheckersUiWf
             }
         }
 
-        public HighLight HightLight
+        internal HighLight HightLight
         {
             get
             {
@@ -67,9 +68,41 @@ namespace CheckersUiWf
             }
         }
 
-        public int Square { get => SquareNum; }
+        internal int Square
+        {
+            get
+            {
+                return SquareNum;
+            }
+            set
+            {
+                if (value != SquareNum)
+                {
+                    SquareNum = value;
+                    IsDirty = true;
+                }
+            }
+        }
 
-        #region private
+        internal static string[] CellNumbers
+        {
+            get
+            {
+                return CellNumber;
+            }
+            set
+            {
+                if (value.Length != NumberSquares + 1)
+                {
+                    CallBack.Panic("Incorrect CellNumbers array size, should be " + (NumberSquares + 1).ToString());
+                }
+                CellNumber = value;
+            }
+        }
+
+        internal bool Dirty { get => IsDirty;  set => IsDirty = value; }
+
+#region private
         
         /// <summary> 
         /// Required designer variable.
@@ -140,7 +173,7 @@ namespace CheckersUiWf
                             g.DrawImage(Images[CellState.WhiteKing], 0, 0);
                             break;
                         default:
-                            gCallBack.Panic("Invalid cell state : " + State);
+                            CallBack.Panic("Invalid cell state : " + State);
                             break;
 
                     }
@@ -155,7 +188,7 @@ namespace CheckersUiWf
 
                     // apply square number
                     if (Square != 0)
-                        g.DrawString(Square.ToString(), Textfont, TextColor, 0, Textfont.Size);
+                        g.DrawString(CellNumber[Square], Textfont, TextColor, 0, Textfont.Size);
                 }
             }
 
@@ -178,12 +211,14 @@ namespace CheckersUiWf
         private HighLight Highlight;
         private int SquareNum;
         private bool IsDirty;
+
         private static Font Textfont = new Font("Arial", 12);
         private static SolidBrush TextColor = new SolidBrush(Color.Black);
         private static Pen Target = new Pen(Color.Yellow, 10) { DashStyle = DashStyle.Dash };
         private static Pen Selected = new Pen(Color.White, 10) { DashStyle = DashStyle.Dash };
         private static Dictionary<CellState, Bitmap> Images;
 
-        #endregion
+        private static string[] CellNumber = Config.BoardNumbers; //Can be configured
     }
+#endregion
 }

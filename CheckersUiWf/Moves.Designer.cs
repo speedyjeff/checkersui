@@ -2,66 +2,71 @@
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using static CheckersUiWf.Boundary;
+using static CheckersUiWf.ExtInterface;
+using static CheckersUiWf.IntInterface;
 
 namespace CheckersUiWf
 {
-    partial class Moves
+    partial class MovesUct
     {
-        public Moves(int height, int width)
+        internal int Count { get { return Grid.Rows.Count; } }
+
+        internal MovesUct(int height, int width)
         {
             Height = height;
             Width = width;
             InitializeComponent();
         }
 
-        public void AddRow(string black, string white)
+        internal void AddRow(string black, string white)
         {
             string[] row = { (Count+1).ToString() + ".", black, white };
             Grid.Rows.Add(row);
         }
 
-        public void SetMoveText(MoveId moveId, string value)
+        internal void SetMoveText(MoveId moveId, string value)
         {
-            if (moveId.move < 0 ) gCallBack.Panic("Invalid row index : " + moveId.move);
-            while (moveId.move > Count)
+            if (moveId.Move < 1 ) CallBack.Panic("Invalid row index : " + moveId.Move);
+            while (moveId.Move > Count)
             {
-                AddRow("", "");
+                AddRow(BlankTableEntry, BlankTableEntry);
             }
-            Grid[moveId.color, moveId.move - 1].Value = value;
+            Grid[moveId.ColumnName, moveId.Row].Value = value;
         }
 
-        public string GetMoveText(MoveId moveId)
+        internal string GetMoveText(MoveId moveId)
         {
             string text = "";
-            if (moveId.move < 1) moveId.move = 1;
-            else if (moveId.move > Count) moveId.move = Count;
-            text = (string)Grid[moveId.color, moveId.move -1].Value;
+            if (moveId.IsValid)
+                text = (string)Grid[moveId.ColumnName, moveId.Row].Value;
             return text;
         }
 
-        public void SetCurrentMove(MoveId moveId)
+        internal void SetCurrentMove(MoveId moveId)
         {
-            if (moveId.move < 1) moveId.move = 1;
-            else if (moveId.move > Count) moveId.move = Count;
-            Grid.CurrentCell = Grid[moveId.color, moveId.move - 1];
+            if (moveId.IsValid)
+            {
+                Grid.CurrentCell = Grid[moveId.ColumnName, moveId.Row];
+                LastCurrentMove = moveId.ShallowCopy();
+            }
+            else
+            {
+                CallBack.Panic("SetCurrentMove invalid moveId=" + moveId.ToString());
+            }
         }
 
-        public MoveId GetCurrentMove()
+        internal MoveId GetCurrentMove()
         {
-            MoveId moveId = new MoveId();
-            if (Count > 1)
+            MoveId moveId = new MoveId(Grid.CurrentCell.RowIndex, Grid.CurrentCell.ColumnIndex);
+            if ((moveId.Move == LastCurrentMove.Move) &&
+                (moveId.Color == LastCurrentMove.Color))
             {
-                moveId.move = Grid.CurrentCell.RowIndex + 1;
-                int col = Grid.CurrentCell.ColumnIndex;
-                moveId.color = Grid.Columns[col].Name;
+                moveId.Position = LastCurrentMove.Position;
             }
             return moveId;
         }
 
-        public int Count { get { return Grid.Rows.Count; } }
-
-        #region private
+#region private
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -97,16 +102,19 @@ namespace CheckersUiWf
             Grid.AllowUserToAddRows = false;
             Grid.AllowUserToDeleteRows = false;
             Grid.ColumnCount = 3;
-            int w = (MovesWidth - MoveColumnWidth - 42/*width of left strip*/) / 2;
-            Grid.Columns[0].Name = MoveColumn;
+            int w = (Config.MovesWidth - Config.MoveColumnWidth - 42/*width of left strip*/) / 2;
+            Grid.Columns[0].Name = Config.MoveColumn;
             Grid.Columns[0].ReadOnly = true;
-            Grid.Columns[0].Width = MoveColumnWidth;
-            Grid.Columns[1].Name = BlackColumn;
+            Grid.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            Grid.Columns[0].Width = Config.MoveColumnWidth;
+            Grid.Columns[1].Name = Config.BlackColumn;
             Grid.Columns[1].Width = w;
             Grid.Columns[1].ReadOnly = true;
-            Grid.Columns[2].Name = WhiteColumn;
+            Grid.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            Grid.Columns[2].Name = Config.WhiteColumn;
             Grid.Columns[2].Width = w;
             Grid.Columns[2].ReadOnly = true;
+            Grid.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
 
             Controls.Add(Grid);
         }
@@ -117,18 +125,11 @@ namespace CheckersUiWf
 
             protected override void OnCellClick(DataGridViewCellEventArgs e)
             {
-                bool rc = false;
-                int row = e.RowIndex;
-                int col = e.ColumnIndex;
-                if (col > 0 && row >= 0)
-                {
-                    rc = gCallBack.MoveClick(new MoveId(row + 1, this.Columns[col].Name));
-                }
-                if (!rc) base.OnCellClick(e);
+                Moves.NavigateMovesByMouse(new MoveId(e.RowIndex, e.ColumnIndex));
             }
         }
 
-        private DataGridView Grid;
+        internal MoveId LastCurrentMove = new MoveId();
     }
-    #endregion
+#endregion
 }

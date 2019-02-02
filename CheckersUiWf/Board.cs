@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CheckersUiWf
 {
-    public partial class Board : UserControl
+    internal partial class BoardUct : UserControl
     {
-        public Board()
+        public BoardUct()
         {
             InitializeComponent();
         }

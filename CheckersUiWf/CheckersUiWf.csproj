@@ -48,7 +48,7 @@
     <Compile Include="Board.Designer.cs">
       <DependentUpon>Board.cs</DependentUpon>
     </Compile>
-    <Compile Include="Boundary.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="CallBack.cs" />
     <Compile Include="Cell.cs">
       <SubType>UserControl</SubType>
@@ -62,21 +62,20 @@
     <Compile Include="Checkers.Designer.cs">
       <DependentUpon>Checkers.cs</DependentUpon>
     </Compile>
-    <Compile Include="Checkers.Menu.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GraphicalOverlay.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GraphicalOverlay.designer.cs">
       <DependentUpon>GraphicalOverlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interface.cs" />
     <Compile Include="Moves.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Moves.Designer.cs">
       <DependentUpon>Moves.cs</DependentUpon>
     </Compile>
+    <Compile Include="MovesNavigate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
