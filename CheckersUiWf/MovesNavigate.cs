@@ -7,13 +7,13 @@ namespace CheckersUiWf
 {
     partial class MoveId // used internally for layout grid
     {
-        internal MoveId(int row, string columnName, Positions position = Positions.Start)
+        internal MoveId(int row, string columnName, MoveState position = MoveState.Before)
         {
             Move = row + 1;
             Color = Column2Color(columnName);
             Position = position;
         }
-        internal MoveId(int row, int column, Positions position = Positions.Start)
+        internal MoveId(int row, int column, MoveState position = MoveState.Before)
         {
             Move = row + 1;
             Color = Column2Color(column > 0 ? Grid.Columns[column].Name : Config.MoveColumn );
@@ -46,13 +46,42 @@ namespace CheckersUiWf
         internal void NavigateMovesByKey(MoveDirection moveDirection)
         {
             bool newCurrent = false;
+            MoveId moveId = null;
 
             do // error exit
             {
                 if (Moves.Count < 1) break; //No table to navigate
 
-                MoveId moveId = Moves.GetCurrentMove();
-                if (!moveId.IsValid) CallBack.Panic("NavigateMoves invalid moveId=" + moveId.ToString());
+                int move = InvalidMove;
+                CheckerColor color = CheckerColor.Invalid;
+                if (moveDirection == MoveDirection.First)
+                {
+                    move = FirstMoveTableRow;
+                    color = CheckerColor.Black;
+                }
+                else if (moveDirection == MoveDirection.Last)
+                {
+                    move = Moves.Count;
+                    color = CheckerColor.White;
+                }
+                if (move != InvalidMove)
+                {
+                    moveId = new MoveId(move, color);
+                    if (GetMoveText(moveId) != BlankTableEntry)
+                    {
+                        newCurrent = true;
+                        break;
+                    }
+                    moveId.Color = (color == CheckerColor.Black ? CheckerColor.White : CheckerColor.Black);
+                    if (GetMoveText(moveId) != BlankTableEntry)
+                    {
+                        newCurrent = true;
+                        break;
+                    }
+                }
+
+                moveId = Moves.GetCurrentMove();
+                if (!moveId.IsValid) IntInterface.CallBack.Panic("NavigateMoves invalid moveId=" + moveId.ToString());
 
                 switch (moveDirection)
                 {
@@ -82,9 +111,9 @@ namespace CheckersUiWf
                         }
                     case MoveDirection.LeftPosition:
                         {
-                            if (moveId.Position == Positions.End)
+                            if (moveId.Position == MoveState.After)
                             {
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             else if (moveId.Color == CheckerColor.Black)
                             {
@@ -97,7 +126,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.Black;
                                     break;
                                 }
-                                moveId.Position = Positions.End;
+                                moveId.Position = MoveState.After;
                             }
                             else if (moveId.Color == CheckerColor.White)
                             {
@@ -107,7 +136,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.White;
                                     break;
                                 }
-                                moveId.Position = Positions.End;
+                                moveId.Position = MoveState.After;
                             }
                             newCurrent = true;
                             break;
@@ -125,7 +154,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.Black;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             else if (moveId.Color == CheckerColor.White)
                             {
@@ -135,16 +164,16 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.White;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             newCurrent = true;
                             break;
                         }
                     case MoveDirection.RightPosition:
                         {
-                            if (moveId.Position == Positions.Start)
+                            if (moveId.Position == MoveState.Before)
                             {
-                                moveId.Position = Positions.End;
+                                moveId.Position = MoveState.After;
                             }
                             else if (moveId.Color == CheckerColor.White)
                             {
@@ -157,7 +186,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.White;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             else if (moveId.Color == CheckerColor.Black)
                             {
@@ -167,7 +196,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.Black;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             newCurrent = true;
                             break;
@@ -185,7 +214,7 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.White;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             else if (moveId.Color == CheckerColor.Black)
                             {
@@ -195,19 +224,19 @@ namespace CheckersUiWf
                                     moveId.Color = CheckerColor.Black;
                                     break;
                                 }
-                                moveId.Position = Positions.Start;
+                                moveId.Position = MoveState.Before;
                             }
                             newCurrent = true;
                             break;
                         }
                 }
+            } while (false) ;
 
-                if (newCurrent)
-                {
-                    Moves.SetCurrentMove(moveId);
-                    CallBack.MoveSelect(moveId);
-                }
-            } while (false);
+            if (newCurrent && moveId != null)
+            {
+                Moves.SetCurrentMove(moveId);
+                IntInterface.CallBack.MoveSelect(moveId);
+            }
         }
 
         internal MoveDirection CmdKey2Direction (Keys keyData)
@@ -225,6 +254,10 @@ namespace CheckersUiWf
                 direction = MoveDirection.RightPosition;
             else if (keyData == Config.MoveLeftPosition)
                 direction = MoveDirection.LeftPosition;
+            else if (keyData == Config.MoveFirst)
+                direction = MoveDirection.First;
+            else if (keyData == Config.MoveLast)
+                direction = MoveDirection.Last;
             return direction;
         }
 
@@ -243,7 +276,7 @@ namespace CheckersUiWf
                 else
                 {
                     Moves.SetCurrentMove(moveId);
-                    CallBack.MoveSelect(moveId);
+                    IntInterface.CallBack.MoveSelect(moveId);
                 }
             }
         }

@@ -102,7 +102,7 @@ namespace CheckersUiWf
             menuStrip1.Height = Config.MenuHeight;
 
             // user initialization and menu items
-            CallBack.InitializeCallout(menuStrip1);
+            IntInterface.CallBack.InitializeCallout(menuStrip1);
 
             var eventHandler = new ToolStripItemClickedEventHandler(ToolStripMenuItem_DropDownItemClicked);
             foreach (ToolStripMenuItem item in menuStrip1.Items)
@@ -115,12 +115,12 @@ namespace CheckersUiWf
         protected void ToolStripMenuItem_DropDownItemClicked(
             object sender, ToolStripItemClickedEventArgs e)
         {
-            CallBack.ToolStripMenuItem_DropDownItemClicked(sender, e);
+            IntInterface.CallBack.ToolStripMenuItem_DropDownItemClicked(sender, e);
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
-            CallBack.OnKeyPress(e.KeyChar);
+            IntInterface.CallBack.OnKeyPress(e.KeyChar);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -129,7 +129,7 @@ namespace CheckersUiWf
             MoveDirection direction = Moves.CmdKey2Direction(keyData);
             if (direction == MoveDirection.OtherKey)
             {
-                rc = CallBack.OnCmdKey(keyData);
+                rc = IntInterface.CallBack.OnCmdKey(keyData);
                 if (rc == false) rc = base.ProcessCmdKey(ref msg, keyData);
             }
             else //not a move table navigation cmd key
@@ -143,7 +143,7 @@ namespace CheckersUiWf
         //example of delegate event handler
         private void Board_OnSelected(int row, int col, int square)
         {
-            CallBack.BoardClick(row, col, square);
+            IntInterface.CallBack.BoardClick(row, col, square);
         }
 
     }

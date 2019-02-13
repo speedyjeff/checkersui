@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace CheckersUiWf
 {
-    public class CallBackCls
+    public class CallBack
     {
-        public CallBackCls() { }
+        public CallBack() { }
 
         //
         // Utility Callbacks

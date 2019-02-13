@@ -9,13 +9,19 @@ namespace CheckersUiWf
 {
     partial class MovesUct
     {
-        internal int Count { get { return Grid.Rows.Count; } }
 
         internal MovesUct(int height, int width)
         {
             Height = height;
             Width = width;
             InitializeComponent();
+        }
+
+        internal int Count { get { return Grid.Rows.Count; } }
+
+        internal void ClearMoves ()
+        {
+            while (Grid.Rows.Count > 0)  Grid.Rows.RemoveAt(0); 
         }
 
         internal void AddRow(string black, string white)
@@ -26,7 +32,7 @@ namespace CheckersUiWf
 
         internal void SetMoveText(MoveId moveId, string value)
         {
-            if (moveId.Move < 1 ) CallBack.Panic("Invalid row index : " + moveId.Move);
+            if (moveId.Move < 1 ) IntInterface.CallBack.Panic("Invalid row index : " + moveId.Move);
             while (moveId.Move > Count)
             {
                 AddRow(BlankTableEntry, BlankTableEntry);
@@ -51,7 +57,19 @@ namespace CheckersUiWf
             }
             else
             {
-                CallBack.Panic("SetCurrentMove invalid moveId=" + moveId.ToString());
+                IntInterface.CallBack.Panic("SetCurrentMove invalid moveId=" + moveId.ToString());
+            }
+        }
+
+        internal void SetCurrentMove(MoveDirection direction)
+        {
+            if (direction != MoveDirection.OtherKey)
+            {
+                Moves.NavigateMovesByKey(direction);
+            }
+            else
+            {
+                IntInterface.CallBack.Panic("SetCurrentMove invalid direction=" + direction.ToString());
             }
         }
 

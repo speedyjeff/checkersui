@@ -94,7 +94,7 @@ namespace CheckersUiWf
             {
                 if (value.Length != NumberSquares + 1)
                 {
-                    CallBack.Panic("Incorrect CellNumbers array size, should be " + (NumberSquares + 1).ToString());
+                    IntInterface.CallBack.Panic("Incorrect CellNumbers array size, should be " + (NumberSquares + 1).ToString());
                 }
                 CellNumber = value;
             }
@@ -173,7 +173,7 @@ namespace CheckersUiWf
                             g.DrawImage(Images[CellState.WhiteKing], 0, 0);
                             break;
                         default:
-                            CallBack.Panic("Invalid cell state : " + State);
+                            IntInterface.CallBack.Panic("Invalid cell state : " + State);
                             break;
 
                     }

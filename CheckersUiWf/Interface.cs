@@ -11,16 +11,17 @@ namespace CheckersUiWf
     public enum CheckerColor { Black, White, Invalid };
     public enum CellState { Inactive, Empty, White, Black, WhiteKing, BlackKing};
     public enum HighLight { Selected, Target, None };
-    public enum Positions { Start, End } //Beginning or end of move
+    public enum MoveState { Before, After } //Beginning or end of move
+    public enum MoveDirection { First, Last, Left, Right, Up, Down, LeftPosition, RightPosition, OtherKey }
 
     public partial class MoveId // location in moves table
     {
         private int move = InvalidMove; //Row number. First row = 1
         private CheckerColor color = CheckerColor.Invalid; //Column header color (Black or White)
-        private Positions position = Positions.Start;
+        private MoveState position = MoveState.Before;
 
         public MoveId() { }
-        public MoveId(int move, CheckerColor color, Positions position = Positions.Start)
+        public MoveId(int move, CheckerColor color, MoveState position = MoveState.Before)
         {
             Move = move;
             Color = color;
@@ -28,7 +29,7 @@ namespace CheckersUiWf
         }
         public int Move { get => move; set => move = value; }
         public CheckerColor Color { get => color; set => color = value; }
-        public Positions Position { get => position; set => position = value; }
+        public MoveState Position { get => position; set => position = value; }
         public MoveId ShallowCopy() { return (MoveId)this.MemberwiseClone(); }
         public new string ToString() { return String.Format("Move {0} Color {1} Postion {2}", Move, Color, Position);
         }
@@ -48,13 +49,14 @@ namespace CheckersUiWf
         public const int InvalidSquare = -1;
         public const int InvalidSwoop = -1;
         public const string BlankTableEntry = "";
+        public const int FirstMoveTableRow = 1;
 
         //
         // Application
         //
-        public static void SetCallBack(CallBackCls callback)
+        public static void SetCallBack(CallBack callback)
         {
-            CallBack = callback;
+            IntInterface.CallBack = callback;
         }
         //
         // Status bars
@@ -73,6 +75,10 @@ namespace CheckersUiWf
         public static void NewGame()
         {
             if (Board != null) Board.NewGame();
+        }
+        public static void ClearBoard()
+        {
+            if (Board != null) Board.ClearBoard();
         }
         public static void SetSquare(int square, CellState state, HighLight highlight)
         {
@@ -117,6 +123,10 @@ namespace CheckersUiWf
         //
         // Previous Move Table
         //
+        public static void ClearMoves()
+        {
+            if (Moves != null) Moves.ClearMoves();
+        }
         public static void SetMoveText(MoveId moveId, string value)
         {
             if (Moves != null) Moves.SetMoveText(moveId, value);
@@ -133,6 +143,10 @@ namespace CheckersUiWf
         {
             if (Moves != null) Moves.SetCurrentMove(moveId);
         }
+        public static void SetCurrentMove(MoveDirection direction)
+        {
+            if (Moves != null) Moves.SetCurrentMove(direction);
+        }
         public static MoveId GetCurrentMove()
         {
             return (Moves == null ? new MoveId() : Moves.GetCurrentMove());
@@ -146,8 +160,6 @@ namespace CheckersUiWf
     //
     // Internal Interfaces
     //
-    internal enum MoveDirection { Left, Right, Up, Down, LeftPosition, RightPosition, OtherKey }
-
     internal static class IntInterface
     {
         internal struct Location
@@ -161,7 +173,7 @@ namespace CheckersUiWf
             public Location To;
         }
 
-        internal static CallBackCls CallBack = new CallBackCls();
+        internal static CallBack CallBack = new CallBack();
         internal static CheckersFrm Checkers;
         internal static BoardUct Board;
         internal static MovesUct Moves;

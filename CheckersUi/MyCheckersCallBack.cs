@@ -80,10 +80,14 @@ namespace CheckersUi
             SetSquareHighLight(Selected, HighLight.Selected);
             SetSquareHighLight(Target, HighLight.Target);
             Swoop = AddSwoop(Selected, Target);
-            SetMoveText(new MoveId(1, CheckerColor.Black), "11-15");
-            SetMoveText(new MoveId(1, CheckerColor.White), "22-18");
-            SetMoveText(new MoveId(2, CheckerColor.Black), "(15x22)");
-            SetCurrentMove(new MoveId(2, CheckerColor.Black));
+            MoveId move = new MoveId(FirstMoveTableRow, CheckerColor.Black);
+            SetMoveText(move, "11-15");
+            move.Color = CheckerColor.White;
+            SetMoveText(move, "22-18");
+            move.Move++;
+            move.Color = CheckerColor.Black;
+            SetMoveText(move, "(15x22)");
+            SetCurrentMove(MoveDirection.First);
             UpdateLeftStatus("Black to move");
             UpdateRightStatus("Black (12) White (12)");
         }

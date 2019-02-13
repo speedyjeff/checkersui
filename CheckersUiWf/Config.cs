@@ -43,7 +43,9 @@ namespace CheckersUiWf
         public static Keys MoveDown = Keys.Down;
         public static Keys MoveLeft = Keys.Left;
         public static Keys MoveRight = Keys.Right;
-        public static Keys MoveLeftPosition = Keys.U;
+        public static Keys MoveLeftPosition = Keys.B;
         public static Keys MoveRightPosition = Keys.M;
+        public static Keys MoveFirst = Keys.Home;
+        public static Keys MoveLast = Keys.End;
     }
 }

@@ -44,9 +44,18 @@ namespace CheckersUiWf
             }
         }
 
+        internal void ClearBoard()
+        {
+            for (int square = 1; square <= NumberSquares; square++)
+            {
+                SetSquare(square, CellState.Empty, HighLight.None);
+            }
+            RemoveAllSwoops();
+        }
+
         internal void SetSquare(int square, CellState state, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
@@ -54,7 +63,7 @@ namespace CheckersUiWf
 
         internal void SetSquareState(int square, CellState state)
         {
-            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + square);
             Squares[square].CellState = state;
             Squares[square].Refresh();
         }
@@ -62,27 +71,27 @@ namespace CheckersUiWf
         internal void SetCellState(int row, int col, CellState state)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) IntInterface.CallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].CellState = state;
             Cells[row][col].Refresh();
         }
 
         internal CellState GetSquareState(int square)
         {
-            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + square);
             return Squares[square].CellState;
         }
 
         internal CellState GetCellState(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) IntInterface.CallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].CellState;
         }
 
         internal void SetSquareHighLight (int square, HighLight highlight)
         {
-            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + square);
             Squares[square].HightLight = highlight;
             Squares[square].Refresh();
         }
@@ -90,28 +99,28 @@ namespace CheckersUiWf
         internal void SetCellHightLight(int row, int col, HighLight hightlight)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) IntInterface.CallBack.Panic("Invalid cell index : " + row + ", " + col);
             Cells[row][col].HightLight = hightlight;
             Cells[row][col].Refresh();
         }
 
         internal HighLight GetSquareHighLight (int square)
         {
-            if (square < 0 || square > NumberSquares) CallBack.Panic("Invalid square number: " + square);
+            if (square < 0 || square > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + square);
             return Squares[square].HightLight;
         }
 
         internal HighLight GetCellHighLight(int row, int col)
         {
             if (row < 0 || row > Cells.Length ||
-                col < 0 || col > Cells[row].Length) CallBack.Panic("Invalid cell index : " + row + ", " + col);
+                col < 0 || col > Cells[row].Length) IntInterface.CallBack.Panic("Invalid cell index : " + row + ", " + col);
             return Cells[row][col].HightLight;
         }
 
         internal int AddSwoop(int fromSquare, int toSquare)
         {
-            if (fromSquare < 0 || fromSquare > NumberSquares) CallBack.Panic("Invalid square number: " + fromSquare);
-            if (toSquare < 0 || toSquare > NumberSquares) CallBack.Panic("Invalid square number: " + toSquare);
+            if (fromSquare < 0 || fromSquare > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + fromSquare);
+            if (toSquare < 0 || toSquare > NumberSquares) IntInterface.CallBack.Panic("Invalid square number: " + toSquare);
 
             if (Config.ColorOnTop == CheckerColor.White)
             {
@@ -284,7 +293,7 @@ namespace CheckersUiWf
                 case Direction.Down_Pointing_Left: bitmap.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
                 case Direction.Down_Pointing_Right: bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
                 default:
-                    CallBack.Panic("Unknown direction : " + direction);
+                    IntInterface.CallBack.Panic("Unknown direction : " + direction);
                     break;
             }
             return bitmap;
@@ -430,7 +439,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) CallBack.MouseClick(square);
+            if (square != 0) IntInterface.CallBack.MouseClick(square);
 
             if (OnSelected != null)
             {
@@ -444,7 +453,7 @@ namespace CheckersUiWf
         {
             var cell = sender as Cell;
             var square = cell.Square;
-            if (square != 0) CallBack.MouseDoubleClick(square);
+            if (square != 0) IntInterface.CallBack.MouseDoubleClick(square);
         }
 
         enum Direction { Up = 1, Down = 2, Left = 4, Right = 8, Up_Pointing_Left = 5, Up_Pointing_Right = 9, Down_Pointing_Left = 6, Down_Pointing_Right = 10 };
