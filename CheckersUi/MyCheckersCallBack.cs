@@ -6,7 +6,7 @@ using static CheckersUiWf.ExtInterface;
 
 namespace CheckersUi
 {
-    public class MyCheckersCallBack: CallBackCls
+    public class MyCheckersCallBack: CallBack
     {
         public MyCheckersCallBack() { }
 
