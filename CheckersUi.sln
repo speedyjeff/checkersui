@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckersUi", "CheckersUi\Ch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckersUiWf", "CheckersUiWf\CheckersUiWf.csproj", "{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckersUi.Common", "CheckersUi.Common\CheckersUi.Common.csproj", "{FA5BCF8E-4C9A-4826-99C4-76947D507A13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA5BCF8E-4C9A-4826-99C4-76947D507A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA5BCF8E-4C9A-4826-99C4-76947D507A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA5BCF8E-4C9A-4826-99C4-76947D507A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA5BCF8E-4C9A-4826-99C4-76947D507A13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 ﻿// Used from https://www.codeproject.com/articles/26071/%2fArticles%2f26071%2fDraw-Over-WinForms-Controls
 
-namespace CodeProject
+namespace CheckersUiWf
 {
     using System;
     using System.ComponentModel;
@@ -12,19 +12,6 @@ namespace CodeProject
         public event EventHandler<PaintEventArgs> Paint;
         private Control form;
 
-        public GraphicalOverlay()
-        {
-            InitializeComponent();
-        }
-
-        public GraphicalOverlay(IContainer container)
-        {
-            container.Add(this);
-
-            InitializeComponent();
-        }
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Control Owner
         {
             get { return form; }
@@ -114,6 +101,7 @@ namespace CodeProject
     }
 }
 
+/*
 namespace System.Windows.Forms
 {
     using System.Drawing;
@@ -136,3 +124,4 @@ namespace System.Windows.Forms
         }
     }
 }
+*/

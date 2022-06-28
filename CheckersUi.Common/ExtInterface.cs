@@ -1,55 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
-using static CheckersUiWf.ExtInterface;
-using static CheckersUiWf.IntInterface;
+using System.Collections.Generic;
+using System.Text;
 
 namespace CheckersUiWf
 {
-    //
-    // Common
-    //
-    public enum CheckerColor { Black, White, Invalid };
-    public enum CellState { Inactive, Empty, White, Black, WhiteKing, BlackKing};
-    public enum HighLight { Selected, Target, None };
-    public enum MoveState { Before, After } //Beginning or end of move
-    public enum MoveDirection { First, Last, Left, Right, Up, Down, LeftPosition, RightPosition, OtherKey }
-
-    public partial class MoveId // location in moves table
-    {
-        private int move = InvalidMove; //Row number. First row = 1
-        private CheckerColor color = CheckerColor.Invalid; //Column header color (Black or White)
-        private MoveState position = MoveState.Before;
-
-        public MoveId() { }
-        public MoveId(int move, CheckerColor color, MoveState position = MoveState.Before)
-        {
-            Move = move;
-            Color = color;
-            Position = position;
-        }
-        public int Move { get => move; set => move = value; }
-        public CheckerColor Color { get => color; set => color = value; }
-        public MoveState Position { get => position; set => position = value; }
-        public MoveId ShallowCopy() { return (MoveId)this.MemberwiseClone(); }
-        public new string ToString() { return String.Format("Move {0} Color {1} Postion {2}", Move, Color, Position);
-        }
-    }
-
-    //
-    // External interface
-    //
+    /*
     public static class ExtInterface
     {
-        //Constants
-        public const int BoardRowCount = 8;
-        public const int BoardColumnCount = 8;
-        public const int NumberSquares = 32;
-        public const int NumberEachTeam = 12;
-        public const int InvalidMove = -1;
-        public const int InvalidSquare = -1;
-        public const int InvalidSwoop = -1;
-        public const string BlankTableEntry = "";
-        public const int FirstMoveTableRow = 1;
 
         //
         // Application
@@ -86,7 +43,7 @@ namespace CheckersUiWf
         }
         public static CellState GetSquareState(int square)
         {
-            return (Board == null ? CellState.Empty :  Board.GetSquareState(square));
+            return (Board == null ? CellState.Empty : Board.GetSquareState(square));
         }
         public static void SetSquareState(int square, CellState state)
         {
@@ -153,33 +110,8 @@ namespace CheckersUiWf
         }
         public static int GetMoveCount()
         {
-            return (Moves == null ? -1 :  Moves.Count);
+            return (Moves == null ? -1 : Moves.Count);
         }
     }
-
-    //
-    // Internal Interfaces
-    //
-    internal static class IntInterface
-    {
-        internal struct Location
-        {
-            public int Row;
-            public int Col;
-        }
-        internal struct Swoop
-        {
-            public Location From;
-            public Location To;
-        }
-
-        internal static CallBack CallBack = new CallBack();
-        internal static CheckersFrm Checkers;
-        internal static BoardUct Board;
-        internal static MovesUct Moves;
-        internal static StatusStrip StatusStripR;
-        internal static StatusStrip StatusStripL;
-        internal static DataGridView Grid;
-    }
-
+    */
 }

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using static CheckersUiWf.ExtInterface;
-using static CheckersUiWf.IntInterface;
 
 namespace CheckersUiWf
 {
-    partial class Cell
+    internal partial class CellUct : UserControl
     {
-        public Cell(CellState state, int square, int height, int width, HighLight highlight)
+        public CellUct(CellState state, int square, int height, int width, HighLight highlight)
         {
+            InitializeComponent();
+
+            DoubleBuffered = true;
+
             SquareNum = square;
             State = state;
             Highlight = highlight;
@@ -20,10 +19,11 @@ namespace CheckersUiWf
             Width = width;
             Padding = new Padding(0);
             Margin = new Padding(0);
-            InitializeComponent();
+
+
         }
 
-        static Cell()
+        static CellUct()
         {
             // preload the images
             Images = new Dictionary<CellState, Bitmap>();
@@ -92,46 +92,16 @@ namespace CheckersUiWf
             }
             set
             {
-                if (value.Length != NumberSquares + 1)
+                if (value.Length != Config.NumberSquares + 1)
                 {
-                    IntInterface.CallBack.Panic("Incorrect CellNumbers array size, should be " + (NumberSquares + 1).ToString());
+                    IntInterface.CallBack.Panic("Incorrect CellNumbers array size, should be " + (Config.NumberSquares + 1).ToString());
                 }
                 CellNumber = value;
             }
         }
 
-        internal bool Dirty { get => IsDirty;  set => IsDirty = value; }
+        internal bool Dirty { get => IsDirty; set => IsDirty = value; }
 
-#region private
-        
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
-            components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.DoubleBuffered = true;
-        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -147,8 +117,7 @@ namespace CheckersUiWf
                     if (State == CellState.Inactive) g.DrawImage(Images[CellState.Inactive], 0, 0, Width, Height);
                     else g.DrawImage(Images[CellState.Empty], 0, 0, Width, Height);
 
-                    Bitmap image = null;
-                    Images.TryGetValue(State, out image);
+                    if (!Images.TryGetValue(State, out Bitmap image)) IntInterface.CallBack.Panic($"Failed to get image {State}");
 
                     switch (State)
                     {
@@ -220,5 +189,4 @@ namespace CheckersUiWf
 
         private static string[] CellNumber = Config.BoardNumbers; //Can be configured
     }
-#endregion
 }

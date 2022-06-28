@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace CheckersUiWf
 {
@@ -10,10 +9,6 @@ namespace CheckersUiWf
         //
         // Utility Callbacks
         //
-        public virtual void InitializeCallout(MenuStrip menuStrip1)
-        {
-            Trace("Initialize User Callout and Menus");
-        }
         public virtual void Trace(string text)
         {
             System.Diagnostics.Debug.WriteLine(text);
@@ -24,50 +19,43 @@ namespace CheckersUiWf
         }
         public virtual void Panic(string text)
         {
-            Trace("Panic: " + text);
+            Trace($"Panic: {text}");
             throw new Exception(text);
         }
+
         //
         // Application Callbacks
         //
         public virtual void OnKeyPress(char key)
         {
-            Trace("OnKeyPress key " + key.ToString());
+            Trace($"OnKeyPress key {key}");
         }
-        public virtual bool OnCmdKey(Keys keyData)
-        {
-            Trace("OnCmdKey " + keyData.ToString());
-            return false;
-        }
+
         //
         // Board Callbacks
         //
         public virtual void MouseClick(int square)
         {
-            Trace("MouseClick Square " + square.ToString());
+            Trace($"MouseClick Square {square}");
         }
         public virtual void MouseDoubleClick(int square)
         {
-            Trace("MouseDoubleClick Square " + square.ToString());
+            Trace($"MouseDoubleClick Square {square}");
         }
-        public virtual void BoardClick(int row, int col, int square)
-        {
-            //Trace(string.Format("BoardClick: row {0} col {1} square {2}", row, col, square));
-        }
+
         //
         // Move Callbacks
         //
         public virtual void MoveSelect(MoveId moveId)
         {
-            Trace("CallBack MoveSelect moveId=" + moveId.ToString());
+            Trace($"CallBack MoveSelect moveId={moveId}");
         }
         //
         // Menu Callbacks
         //
-        public virtual bool ToolStripMenuItem_DropDownItemClicked(
-            object sender, ToolStripItemClickedEventArgs e)
+        public virtual bool MenuItemSelect(string menuName)
         {
-            Trace("Unhandled menu item click " + e.ClickedItem.Text);
+            Trace($"Unhandled menu item click {menuName}");
             return false;
         }
     }

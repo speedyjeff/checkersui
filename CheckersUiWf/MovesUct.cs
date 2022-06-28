@@ -1,86 +1,151 @@
 ﻿using System;
+using System.Data;
 using System.Windows.Forms;
-using static CheckersUiWf.ExtInterface;
-using static CheckersUiWf.IntInterface;
+using Microsoft.VisualBasic.Devices;
 
 namespace CheckersUiWf
 {
-    partial class MoveId // used internally for layout grid
+    partial class MovesUct : UserControl
     {
-        internal MoveId(int row, string columnName, MoveState position = MoveState.Before)
+        public MovesUct(int height, int width)
         {
-            Move = row + 1;
-            Color = Column2Color(columnName);
-            Position = position;
-        }
-        internal MoveId(int row, int column, MoveState position = MoveState.Before)
-        {
-            Move = row + 1;
-            Color = Column2Color(column > 0 ? Grid.Columns[column].Name : Config.MoveColumn );
-            Position = position;
-        }
-        internal String ColumnName { get => Color2ColumnName(color); set => color = Column2Color(value); }
-        internal int Row { get => move - 1; set => move = value + 1; }
-        internal bool IsValid { get =>
-                    (move > 0 &&
-                     color != CheckerColor.Invalid &&
-                     move <= Moves.Count); }
+            Height = height;
+            Width = width;
+            InitializeComponent();
 
-        private static string Color2ColumnName(CheckerColor color)
-        {
-            if (color == CheckerColor.Black) return Config.BlackColumn;
-            if (color == CheckerColor.White) return Config.WhiteColumn;
-            return Config.MoveColumn;
+            var data = new DataSet("Previous");
+
+            Grid = new MyDataGridView();
+            Grid.Name = "Moves";
+            Grid.Size = new Size(Width, Height);
+            Grid.AllowUserToAddRows = false;
+            Grid.AllowUserToDeleteRows = false;
+            Grid.ColumnCount = 3;
+            int w = (Config.MovesWidth - Config.MoveColumnWidth - 42/*width of left strip*/) / 2;
+            Grid.Columns[0].Name = Config.MoveColumn;
+            Grid.Columns[0].ReadOnly = true;
+            Grid.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            Grid.Columns[0].Width = Config.MoveColumnWidth;
+            Grid.Columns[1].Name = Config.BlackColumn;
+            Grid.Columns[1].Width = w;
+            Grid.Columns[1].ReadOnly = true;
+            Grid.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            Grid.Columns[2].Name = Config.WhiteColumn;
+            Grid.Columns[2].Width = w;
+            Grid.Columns[2].ReadOnly = true;
+            Grid.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            Controls.Add(Grid);
         }
 
-        private static CheckerColor Column2Color(string column)
-        {
-            if (column == Config.BlackColumn) return CheckerColor.Black;
-            if (column == Config.WhiteColumn) return CheckerColor.White;
-            return CheckerColor.Invalid;
-        }
-    }
+        #region private
+        private DataGridView Grid;
+        internal MoveId LastCurrentMove = new MoveId();
 
-    partial class MovesUct
-    {
+        internal int Count { get { return Grid.Rows.Count; } }
+
+        internal void ClearMoves()
+        {
+            while (Grid.Rows.Count > 0) Grid.Rows.RemoveAt(0);
+        }
+
+        internal void AddRow(string black, string white)
+        {
+            string[] row = { (Count + 1).ToString() + ".", black, white };
+            Grid.Rows.Add(row);
+        }
+
+        internal void SetMoveText(MoveId moveId, string value)
+        {
+            if (moveId.Move < 1) IntInterface.CallBack.Panic("Invalid row index : " + moveId.Move);
+            while (moveId.Move > Count)
+            {
+                AddRow(Config.BlankTableEntry, Config.BlankTableEntry);
+            }
+            Grid[moveId.ColumnName, moveId.Row].Value = value;
+        }
+
+        internal string GetMoveText(MoveId moveId)
+        {
+            string text = "";
+            if (moveId.IsValid)
+                text = (string)Grid[moveId.ColumnName, moveId.Row].Value;
+            return text;
+        }
+
+        internal void SetCurrentMove(MoveId moveId)
+        {
+            if (moveId.IsValid)
+            {
+                Grid.CurrentCell = Grid[moveId.ColumnName, moveId.Row];
+                LastCurrentMove = moveId.ShallowCopy();
+            }
+            else
+            {
+                IntInterface.CallBack.Panic("SetCurrentMove invalid moveId=" + moveId.ToString());
+            }
+        }
+
+        internal void SetCurrentMove(MoveDirection direction)
+        {
+            if (direction != MoveDirection.OtherKey)
+            {
+                NavigateMovesByKey(direction);
+            }
+            else
+            {
+                IntInterface.CallBack.Panic("SetCurrentMove invalid direction=" + direction.ToString());
+            }
+        }
+
+        internal MoveId GetCurrentMove()
+        {
+            MoveId moveId = new MoveId(Grid.CurrentCell.RowIndex, Grid.CurrentCell.ColumnIndex);
+            if ((moveId.Move == LastCurrentMove.Move) &&
+                (moveId.Color == LastCurrentMove.Color))
+            {
+                moveId.Position = LastCurrentMove.Position;
+            }
+            return moveId;
+        }
+
         internal void NavigateMovesByKey(MoveDirection moveDirection)
         {
             bool newCurrent = false;
             MoveId moveId = null;
-
             do // error exit
             {
-                if (Moves.Count < 1) break; //No table to navigate
+                if (Count < 1) break; //No table to navigate
 
-                int move = InvalidMove;
+                int move = Config.InvalidMove;
                 CheckerColor color = CheckerColor.Invalid;
                 if (moveDirection == MoveDirection.First)
                 {
-                    move = FirstMoveTableRow;
+                    move = Config.FirstMoveTableRow;
                     color = CheckerColor.Black;
                 }
                 else if (moveDirection == MoveDirection.Last)
                 {
-                    move = Moves.Count;
+                    move = Count;
                     color = CheckerColor.White;
                 }
-                if (move != InvalidMove)
+                if (move != Config.InvalidMove)
                 {
                     moveId = new MoveId(move, color);
-                    if (GetMoveText(moveId) != BlankTableEntry)
+                    if (GetMoveText(moveId) != Config.BlankTableEntry)
                     {
                         newCurrent = true;
                         break;
                     }
                     moveId.Color = (color == CheckerColor.Black ? CheckerColor.White : CheckerColor.Black);
-                    if (GetMoveText(moveId) != BlankTableEntry)
+                    if (GetMoveText(moveId) != Config.BlankTableEntry)
                     {
                         newCurrent = true;
                         break;
                     }
                 }
 
-                moveId = Moves.GetCurrentMove();
+                moveId = GetCurrentMove();
                 if (!moveId.IsValid) IntInterface.CallBack.Panic("NavigateMoves invalid moveId=" + moveId.ToString());
 
                 switch (moveDirection)
@@ -89,7 +154,7 @@ namespace CheckersUiWf
                         {
                             if (moveId.Move == Count) break;
                             moveId.Move++;
-                            if (GetMoveText(moveId) == BlankTableEntry)
+                            if (GetMoveText(moveId) == Config.BlankTableEntry)
                             {
                                 moveId.Move--;
                                 break;
@@ -101,7 +166,7 @@ namespace CheckersUiWf
                         {
                             if (moveId.Move == 1) break;
                             moveId.Move--;
-                            if (GetMoveText(moveId) == BlankTableEntry)
+                            if (GetMoveText(moveId) == Config.BlankTableEntry)
                             {
                                 moveId.Move++;
                                 break;
@@ -120,7 +185,7 @@ namespace CheckersUiWf
                                 if (moveId.Move == 1) break;
                                 moveId.Move--;
                                 moveId.Color = CheckerColor.White;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Move++;
                                     moveId.Color = CheckerColor.Black;
@@ -131,7 +196,7 @@ namespace CheckersUiWf
                             else if (moveId.Color == CheckerColor.White)
                             {
                                 moveId.Color = CheckerColor.Black;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Color = CheckerColor.White;
                                     break;
@@ -148,7 +213,7 @@ namespace CheckersUiWf
                                 if (moveId.Move == 1) break;
                                 moveId.Move--;
                                 moveId.Color = CheckerColor.White;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Move++;
                                     moveId.Color = CheckerColor.Black;
@@ -159,7 +224,7 @@ namespace CheckersUiWf
                             else if (moveId.Color == CheckerColor.White)
                             {
                                 moveId.Color = CheckerColor.Black;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Color = CheckerColor.White;
                                     break;
@@ -180,7 +245,7 @@ namespace CheckersUiWf
                                 if (moveId.Move == Count) break;
                                 moveId.Move++;
                                 moveId.Color = CheckerColor.Black;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Move--;
                                     moveId.Color = CheckerColor.White;
@@ -191,7 +256,7 @@ namespace CheckersUiWf
                             else if (moveId.Color == CheckerColor.Black)
                             {
                                 moveId.Color = CheckerColor.White;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Color = CheckerColor.Black;
                                     break;
@@ -208,7 +273,7 @@ namespace CheckersUiWf
                                 if (moveId.Move == Count) break;
                                 moveId.Move++;
                                 moveId.Color = CheckerColor.Black;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Move--;
                                     moveId.Color = CheckerColor.White;
@@ -219,7 +284,7 @@ namespace CheckersUiWf
                             else if (moveId.Color == CheckerColor.Black)
                             {
                                 moveId.Color = CheckerColor.White;
-                                if (GetMoveText(moveId) == BlankTableEntry)
+                                if (GetMoveText(moveId) == Config.BlankTableEntry)
                                 {
                                     moveId.Color = CheckerColor.Black;
                                     break;
@@ -230,55 +295,34 @@ namespace CheckersUiWf
                             break;
                         }
                 }
-            } while (false) ;
+            } while (false);
 
             if (newCurrent && moveId != null)
             {
-                Moves.SetCurrentMove(moveId);
+                SetCurrentMove(moveId);
                 IntInterface.CallBack.MoveSelect(moveId);
             }
-        }
-
-        internal MoveDirection CmdKey2Direction (Keys keyData)
-        {
-            MoveDirection direction = MoveDirection.OtherKey;
-            if (keyData == Config.MoveUp)
-                direction = MoveDirection.Up;
-            else if (keyData == Config.MoveDown)
-                direction = MoveDirection.Down;
-            else if (keyData == Config.MoveLeft)
-                direction = MoveDirection.Left;
-            else if (keyData == Config.MoveRight)
-                direction = MoveDirection.Right;
-            else if (keyData == Config.MoveRightPosition)
-                direction = MoveDirection.RightPosition;
-            else if (keyData == Config.MoveLeftPosition)
-                direction = MoveDirection.LeftPosition;
-            else if (keyData == Config.MoveFirst)
-                direction = MoveDirection.First;
-            else if (keyData == Config.MoveLast)
-                direction = MoveDirection.Last;
-            return direction;
         }
 
         internal void NavigateMovesByMouse(MoveId moveId)
         {
             if (!moveId.IsValid)
             {
-                Moves.SetCurrentMove(Moves.LastCurrentMove);
+                SetCurrentMove(LastCurrentMove);
             }
             else
             {
-                if (Moves.GetMoveText(moveId) == BlankTableEntry)
+                if (GetMoveText(moveId) == Config.BlankTableEntry)
                 {
-                    Moves.SetCurrentMove(Moves.LastCurrentMove);
+                    SetCurrentMove(LastCurrentMove);
                 }
                 else
                 {
-                    Moves.SetCurrentMove(moveId);
+                    SetCurrentMove(moveId);
                     IntInterface.CallBack.MoveSelect(moveId);
                 }
             }
         }
+        #endregion
     }
 }

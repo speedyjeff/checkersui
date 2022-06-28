@@ -1,10 +1,20 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace CheckersUiWf
 {
     public static class Config
     {
+        //Constants
+        public const int BoardRowCount = 8;
+        public const int BoardColumnCount = 8;
+        public const int NumberSquares = 32;
+        public const int NumberEachTeam = 12;
+        public const int InvalidMove = -1;
+        public const int InvalidSquare = -1;
+        public const int InvalidSwoop = -1;
+        public const string BlankTableEntry = "";
+        public const int FirstMoveTableRow = 1;
+
         //
         // Application Configuration
         //
@@ -38,14 +48,5 @@ namespace CheckersUiWf
         public static string WhiteColumn = "White";
         public static string BlackColumn = "Black";
         public static int MoveColumnWidth = 25;
-        // Move table navigation keys
-        public static Keys MoveUp = Keys.Up;
-        public static Keys MoveDown = Keys.Down;
-        public static Keys MoveLeft = Keys.Left;
-        public static Keys MoveRight = Keys.Right;
-        public static Keys MoveLeftPosition = Keys.B;
-        public static Keys MoveRightPosition = Keys.M;
-        public static Keys MoveFirst = Keys.Home;
-        public static Keys MoveLast = Keys.End;
     }
 }

@@ -1,108 +1,26 @@
 ﻿using System;
-using System.IO;
+
 using CheckersUiWf;
-using System.Windows.Forms;
-using static CheckersUiWf.ExtInterface;
 
 namespace CheckersUi
 {
     public class MyCheckersCallBack: CallBack
     {
-        public MyCheckersCallBack() { }
-
         public override void Trace(string text)
         {
             System.Diagnostics.Debug.WriteLine("MyCallBack: " + text);
         }
 
-        public override void InitializeCallout(MenuStrip menuStrip1)
-        {
-            //
-            // File Menu
-            //
-            // openToolStripMenuItem
-            var openToolStripMenuItem = new ToolStripMenuItem();
-            openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            openToolStripMenuItem.Name = FileOpen;
-            openToolStripMenuItem.ShortcutKeys = ((Keys)((Keys.Control | Keys.O)));
-            openToolStripMenuItem.Text = "&Open";
-
-            // toolStripSeparator1
-            var toolStripSeparator1 = new ToolStripSeparator();
-            toolStripSeparator1.Name = "toolStripSeparator1";
-
-            // exitToolStripMenuItem
-            var exitToolStripMenuItem = new ToolStripMenuItem();
-            exitToolStripMenuItem.Name = FileExit;
-            exitToolStripMenuItem.Text = "E&xit";
-
-            // fileToolStripMenuItem
-            var fileToolStripMenuItem = new ToolStripMenuItem();
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
-                openToolStripMenuItem,
-                toolStripSeparator1,
-                exitToolStripMenuItem});
-            fileToolStripMenuItem.Text = "&File";
-
-            menuStrip1.Items.Add(fileToolStripMenuItem);
-
-            //
-            // Game Menu
-            //
-            // newGameToolStripMenuItem
-            var newGameToolStripMenuItem = new ToolStripMenuItem();
-            newGameToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            newGameToolStripMenuItem.Name = "New Game";
-            newGameToolStripMenuItem.Text = "&New Game";
-
-            // undoToolStripMenuItem
-            var undoToolStripMenuItem = new ToolStripMenuItem();
-            undoToolStripMenuItem.Name = "Undo";
-            undoToolStripMenuItem.ShortcutKeys = ((Keys)((Keys.Control | Keys.Z)));
-            undoToolStripMenuItem.Text = "&Undo";
-
-            // gameToolStripMenuItem
-            var gameToolStripMenuItem = new ToolStripMenuItem();
-            gameToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] {
-                newGameToolStripMenuItem,
-                undoToolStripMenuItem});
-            gameToolStripMenuItem.Text = "&Game";
-
-            // menuStrip1
-            menuStrip1.Items.Add(gameToolStripMenuItem);
-
-            // Set up example
-            NewGame();
-            SetSquareState(15, CellState.Black);
-            SetSquareState(11, CellState.Empty);
-            SetSquareState(18, CellState.White);
-            SetSquareState(22, CellState.Empty);
-            SetSquareHighLight(Selected, HighLight.Selected);
-            SetSquareHighLight(Target, HighLight.Target);
-            Swoop = AddSwoop(Selected, Target);
-            MoveId move = new MoveId(FirstMoveTableRow, CheckerColor.Black);
-            SetMoveText(move, "11-15");
-            move.Color = CheckerColor.White;
-            SetMoveText(move, "22-18");
-            move.Move++;
-            move.Color = CheckerColor.Black;
-            SetMoveText(move, "(15x22)");
-            SetCurrentMove(MoveDirection.First);
-            UpdateLeftStatus("Black to move");
-            UpdateRightStatus("Black (12) White (12)");
-        }
-
-        public override bool ToolStripMenuItem_DropDownItemClicked(
-            object sender, ToolStripItemClickedEventArgs e)
+        public override bool MenuItemSelect(string menuName)
         {
             bool handled = false;
-            switch (e.ClickedItem.Name)
+            switch (menuName)
             {
-                case FileOpen:
+                case CheckersFrm.FileOpen:
                     OpenFile();
                     handled = true;
                     break;
-                case FileExit:
+                case CheckersFrm.FileExit:
                     Application.Exit();
                     handled = true;
                     break;
@@ -120,18 +38,18 @@ namespace CheckersUi
 
             if (state == CellState.Empty)
             {
-                if (Target != InvalidSquare)
+                if (Target != Config.InvalidSquare)
                 {
                     SetSquareHighLight(Target, HighLight.None);
-                    if (Swoop != InvalidSwoop)
+                    if (Swoop != Config.InvalidSwoop)
                     {
                         RemoveSwoop(Swoop);
-                        Swoop = InvalidSwoop;
+                        Swoop = Config.InvalidSwoop;
                     }
                 }
                 if (Target == square)
                 {
-                    Target = InvalidSquare;
+                    Target = Config.InvalidSquare;
                 }
                 else
                 {
@@ -141,18 +59,18 @@ namespace CheckersUi
             }
             else if (state != CellState.Inactive) //a checker or king
             {
-                if (Selected != InvalidSquare)
+                if (Selected != Config.InvalidSquare)
                 {
                     SetSquareHighLight(Selected, HighLight.None);
-                    if (Swoop != InvalidSwoop)
+                    if (Swoop != Config.InvalidSwoop)
                     {
                         RemoveSwoop(Swoop);
-                        Swoop = InvalidSwoop;
+                        Swoop = Config.InvalidSwoop;
                     }
                 }
                 if (Selected == square)
                 {
-                    Selected = InvalidSquare;
+                    Selected = Config.InvalidSquare;
                 }
                 else
                 {
@@ -160,14 +78,14 @@ namespace CheckersUi
                     Selected = square;
                 }
             }
-            if (Target != InvalidSquare && Selected != InvalidSquare && Swoop == InvalidSwoop)
+            if (Target != Config.InvalidSquare && Selected != Config.InvalidSquare && Swoop == Config.InvalidSwoop)
             {
                 Swoop = AddSwoop(Selected, Target);
             }
             else if (Swoop != InvalidSwoop)
             {
                 RemoveSwoop(Swoop);
-                Swoop = InvalidSwoop;
+                Swoop = Config.InvalidSwoop;
             }
         }
 
@@ -179,14 +97,14 @@ namespace CheckersUi
             {
                 case 'x':
                 case 'X':
-                    if (Selected != InvalidSquare)
+                    if (Selected != Config.InvalidSquare)
                     {
                         SetSquare(Selected, CellState.Empty, HighLight.None);
-                        Selected = InvalidSquare;
-                        if (Swoop != InvalidSwoop)
+                        Selected = Config.InvalidSquare;
+                        if (Swoop != Config.InvalidSwoop)
                         {
                             RemoveSwoop(Swoop);
-                            Swoop = InvalidSwoop;
+                            Swoop = Config.InvalidSwoop;
                         }
                     }
                     break;
@@ -251,12 +169,6 @@ namespace CheckersUi
             MessageBox.Show(fileContent, "File Content at path: " + filePath, MessageBoxButtons.OK);
         }
 
-        private const string FileOpen = "FileOpen";
-        private const string FileExit = "FileExit";
-        private int Selected = 15;
-        private int Target = 22;
-        private int Swoop = InvalidSwoop;
-        
         private static string[] RowColumn =
         {
             "",
