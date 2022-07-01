@@ -1,11 +1,15 @@
-### Winforms shell for a simple Checkers UI
+### Winforms and Maui shell for a simple Checkers UI
 
 ![main](https://github.com/speedyjeff/checkersui/blob/master/Media/main.png)
 
 
 ## Visuals
 
-Update the images under CheckersUi\Media
+Update the images under Media
+
+## CheckersUiMaui
+
+Maui application.
 
 ## CheckersUiWf
 

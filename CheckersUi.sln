@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckersUi", "CheckersUi\Ch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckersUiWf", "CheckersUiWf\CheckersUiWf.csproj", "{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckersUiMaui", "CheckersUiMaui\CheckersUiMaui.csproj", "{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D73A905-E6E2-41B7-AF14-FC1B0384D67D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81513524-013B-4BCF-A67A-CD4B3E3EBAC7}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

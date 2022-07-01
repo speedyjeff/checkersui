@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:CheckersUiMaui"
+             x:Class="CheckersUiMaui.MainPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="80*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="95*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- left -->
+        <Grid Grid.Row="0" Grid.Column="0">
+            <controls:DataGridControl x:Name="DataGrid"/>
+        </Grid>
+        
+        <!-- right -->
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!-- row 0 -->
+            <controls:CellControl Grid.Row="0" Grid.Column="0" x:Name="Grid_0_0"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="1" x:Name="Grid_0_1"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="2" x:Name="Grid_0_2"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="3" x:Name="Grid_0_3"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="4" x:Name="Grid_0_4"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="5" x:Name="Grid_0_5"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="6" x:Name="Grid_0_6"/>
+            <controls:CellControl Grid.Row="0" Grid.Column="7" x:Name="Grid_0_7"/>
+
+            <!-- row 1 -->
+            <controls:CellControl Grid.Row="1" Grid.Column="0" x:Name="Grid_1_0"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="1" x:Name="Grid_1_1"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="2" x:Name="Grid_1_2"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="3" x:Name="Grid_1_3"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="4" x:Name="Grid_1_4"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="5" x:Name="Grid_1_5"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="6" x:Name="Grid_1_6"/>
+            <controls:CellControl Grid.Row="1" Grid.Column="7" x:Name="Grid_1_7"/>
+
+            <!-- row 2 -->
+            <controls:CellControl Grid.Row="2" Grid.Column="0" x:Name="Grid_2_0"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="1" x:Name="Grid_2_1"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="2" x:Name="Grid_2_2"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="3" x:Name="Grid_2_3"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="4" x:Name="Grid_2_4"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="5" x:Name="Grid_2_5"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="6" x:Name="Grid_2_6"/>
+            <controls:CellControl Grid.Row="2" Grid.Column="7" x:Name="Grid_2_7"/>
+
+            <!-- row 3 -->
+            <controls:CellControl Grid.Row="3" Grid.Column="0" x:Name="Grid_3_0"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="1" x:Name="Grid_3_1"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="2" x:Name="Grid_3_2"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="3" x:Name="Grid_3_3"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="4" x:Name="Grid_3_4"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="5" x:Name="Grid_3_5"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="6" x:Name="Grid_3_6"/>
+            <controls:CellControl Grid.Row="3" Grid.Column="7" x:Name="Grid_3_7"/>
+
+            <!-- row 4 -->
+            <controls:CellControl Grid.Row="4" Grid.Column="0" x:Name="Grid_4_0"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="1" x:Name="Grid_4_1"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="2" x:Name="Grid_4_2"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="3" x:Name="Grid_4_3"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="4" x:Name="Grid_4_4"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="5" x:Name="Grid_4_5"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="6" x:Name="Grid_4_6"/>
+            <controls:CellControl Grid.Row="4" Grid.Column="7" x:Name="Grid_4_7"/>
+
+            <!-- row 5 -->
+            <controls:CellControl Grid.Row="5" Grid.Column="0" x:Name="Grid_5_0"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="1" x:Name="Grid_5_1"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="2" x:Name="Grid_5_2"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="3" x:Name="Grid_5_3"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="4" x:Name="Grid_5_4"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="5" x:Name="Grid_5_5"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="6" x:Name="Grid_5_6"/>
+            <controls:CellControl Grid.Row="5" Grid.Column="7" x:Name="Grid_5_7"/>
+
+            <!-- row 6 -->
+            <controls:CellControl Grid.Row="6" Grid.Column="0" x:Name="Grid_6_0"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="1" x:Name="Grid_6_1"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="2" x:Name="Grid_6_2"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="3" x:Name="Grid_6_3"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="4" x:Name="Grid_6_4"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="5" x:Name="Grid_6_5"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="6" x:Name="Grid_6_6"/>
+            <controls:CellControl Grid.Row="6" Grid.Column="7" x:Name="Grid_6_7"/>
+
+            <!-- row 7 -->
+            <controls:CellControl Grid.Row="7" Grid.Column="0" x:Name="Grid_7_0"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="1" x:Name="Grid_7_1"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="2" x:Name="Grid_7_2"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="3" x:Name="Grid_7_3"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="4" x:Name="Grid_7_4"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="5" x:Name="Grid_7_5"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="6" x:Name="Grid_7_6"/>
+            <controls:CellControl Grid.Row="7" Grid.Column="7" x:Name="Grid_7_7"/>
+
+            <!-- overlay -->
+            <controls:SwoopView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="8" Grid.RowSpan="8" x:Name="Swoop"/>
+        </Grid>
+
+        <!-- footer -->
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Label x:Name="Status" HorizontalOptions="Start"/>
+            <Label x:Name="Totals" HorizontalOptions="Center"/>
+        </Grid>
+    </Grid>
+ 
+</ContentPage>

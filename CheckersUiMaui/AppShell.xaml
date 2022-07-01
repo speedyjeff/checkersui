@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CheckersUiMaui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CheckersUiMaui"
+    Shell.FlyoutBehavior="Flyout">
+
+    <FlyoutItem Title="Home">
+        <ShellContent
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="New Game">
+        <ShellContent
+        ContentTemplate="{DataTemplate local:NewGamePage}"
+        Route="NewGamePage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Open">
+        <ShellContent
+        ContentTemplate="{DataTemplate local:OpenPage}"
+        Route="OpenPage" />
+    </FlyoutItem>
+
+</Shell>
